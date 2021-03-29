@@ -49,8 +49,8 @@ sat2 = satTemp2.QueryInterface(STKObjects.IAgSatellite)
 satTemp3 = sc.Children.Item('sat3')
 sat3 = satTemp3.QueryInterface(STKObjects.IAgSatellite)
 # constellation.Objects.AddObject(sat1)
-constellation.Objects.AddObject(sat2)
-constellation.Objects.AddObject(sat3)
+# constellation.Objects.AddObject(sat2)
+# constellation.Objects.AddObject(sat3)
 
 # 获取链路
 chainTemp1 = sc.Children.Item("ChainChidao")
@@ -154,29 +154,6 @@ for a1 in banchangzhou:
                                                                     coverage3 = sum(chainResults3.DataSets.GetDataSetByName("Duration").GetValues()) / totalTime * 100
                                                                 else:
                                                                     coverage3 = 0
+                                                                fo.write("%d %f %d %d %d 0 %d %f %d %d %d %d %d %f %d %d %d %d %.1f %.1f %.1f\n", a1, a2, a3, a4, a5, aa1, aa2, aa3, aa4, aa5, aa6, aaa1, aaa2, aaa3, aaa4, aaa5, aaa6, coverage1, coverage2, coverage3)
                         fo.close()                                                          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                    
-                    
-                    
-
-                    print(coverage1)
-                    print(coverage2)
-                    print(coverage3)
-                    print("------------------------")
+                    print("%d %f %d %d %d\n", a1, a2, a3, a4, a5)
