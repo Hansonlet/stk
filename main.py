@@ -4,6 +4,7 @@ from comtypes.gen import STKUtil
 from comtypes.gen import STKObjects
 from comtypes.client import GetActiveObject
 import time
+import _thread
 
 def modify(keplerian, a1, a2, a3, a4, a5, a6):
     # 半长轴长度
@@ -19,12 +20,21 @@ def modify(keplerian, a1, a2, a3, a4, a5, a6):
     # 设置卫星在该轨道中的“相位”
     keplerian.Location.QueryInterface(STKObjects.IAgClassicalLocationTrueAnomaly).Value = a6
 
+def write_data(txtCount, data):
+    print("================ start a new thread")
+    txtStr = "data" + str(txtCount) + ".txt"
+    fo = open(txtStr, "w")
+    for row in data:
+        fo.write("%d %.0f %d %d %d %d %d %.0f %d %d %d %d %d %.0f %d %d %d %d %.0f %.0f %.0f\n" % (row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], row[11], row[12], row[13], row[14], row[15], row[16], row[17], row[18], row[19], row[20]))                
+    fo.close()
+    print("a thread finished")
+
 
 
 startTime = time.time()
 # init
 uiApplication = GetActiveObject('STK10.Application')
-uiApplication.Visible = True
+uiApplication.Visible = False
 root = uiApplication.Personality2
 sc = root.CurrentScenario
 sc2 = sc.QueryInterface(STKObjects.IAgScenario)
@@ -91,18 +101,18 @@ keplerian3.Orientation.AscNodeType = STKObjects.eAscNodeRAAN
 keplerian3.LocationType = STKObjects.eLocationTrueAnomaly
 
 # 初始化参数
-banchangzhou = [4737, 5237, 5737, 6237, 6737, 7237]     # 3000-6000
-pianxinlv = [0, 0.1, 0.2, 0.3, 0.4, 0.5]                # 0-0.5
-qingjiao = [0, 15, 30, 45, 60, 75, 90]                  # 0-90
-jindidian = [0, 40, 80, 120, 160, 200, 240, 280, 320]   # 0-360
-shengjiaodian = [0, 15, 30, 45, 60, 75, 90]             # 0-90
-xiangwei = [0, 60, 120, 180, 240, 300]                  # 0-360
-totalTime = 27*24*60*60 + 4*60*60
+banchangzhou = [4737, 5737, 6737]           # 3000-6000
+pianxinlv = [0, 0.2, 0.4]                   # 0-0.5
+qingjiao = [0, 30, 60, 90]                  # 0-90
+jindidian = [0, 90, 180, 270]               # 0-360
+shengjiaodian = [0, 30, 60, 90]             # 0-90
+xiangwei = [0, 90, 180, 270]                # 0-360
+totalTime = 27 * 24 * 60 * 60 + 4 * 60 * 60
 txtCount = 0
 
 # 一星计算
 for a1 in banchangzhou:
-    for a2 in pianxinlv：
+    for a2 in pianxinlv:
         for a3 in qingjiao:
             for a4 in jindidian:
                 for a5 in shengjiaodian:
@@ -112,48 +122,55 @@ for a1 in banchangzhou:
                     for aa1 in banchangzhou:
                         if aa1 > a1:
                             break
-                        txtCount = txtCount+1
-                        txtStr = "data"+str(txtCount)+".txt"
-                        fo = open(txtStr, "w")
-                        for aa2 in pianxinlv：
+                        for aa2 in pianxinlv:
                             for aa3 in qingjiao:
                                 for aa4 in jindidian:
                                     for aa5 in shengjiaodian:
+                                        txtCount = txtCount+1
+                                        data = []
                                         for aa6 in xiangwei:
-                                        modify(keplerian2, aa1, aa2, aa3, aa4, aa5, aa6)
-                                        sat2.Propagator.QueryInterface(STKObjects.IAgVePropagatorJ4Perturbation).InitialState.Representation.Assign(keplerian2)
-                                        sat2.Propagator.QueryInterface(STKObjects.IAgVePropagatorJ4Perturbation).Propagate()
-                                        for aaa1 in banchangzhou:
-                                            if aaa1 > aa1:
-                                            break
-                                            for aaa2 in pianxinlv：
-                                                for aaa3 in qingjiao:
-                                                    for aaa4 in jindidian:
-                                                        for aaa5 in shengjiaodian:
-                                                            for aaa6 in xiangwei:
-                                                                modify(keplerian3, aaa1, aaa2, aaa3, aaa4, aaa5, aaa6)
-                                                                sat3.Propagator.QueryInterface(STKObjects.IAgVePropagatorJ4Perturbation).InitialState.Representation.Assign(keplerian3)
-                                                                sat3.Propagator.QueryInterface(STKObjects.IAgVePropagatorJ4Perturbation).Propagate()
-                                                                
-                                                                # calculate
-                                                                chain1.ComputeAccess()
-                                                                chain2.ComputeAccess()
-                                                                chain3.ComputeAccess()
-                                                                chainResults1 = chainTemp1.DataProviders.GetDataPrvIntervalFromPath("Complete Access").Exec(sc2.StartTime, sc2.StopTime)
-                                                                chainResults2 = chainTemp2.DataProviders.GetDataPrvIntervalFromPath("Complete Access").Exec(sc2.StartTime, sc2.StopTime)
-                                                                chainResults3 = chainTemp3.DataProviders.GetDataPrvIntervalFromPath("Complete Access").Exec(sc2.StartTime, sc2.StopTime)
-                                                                if chainResults1.DataSets.Count != 0:
-                                                                    coverage1 = sum(chainResults1.DataSets.GetDataSetByName("Duration").GetValues()) / totalTime * 100
-                                                                else:
-                                                                    coverage1 = 0
-                                                                if chainResults2.DataSets.Count != 0:
-                                                                    coverage2 = sum(chainResults2.DataSets.GetDataSetByName("Duration").GetValues()) / totalTime * 100
-                                                                else:
-                                                                    coverage2 = 0
-                                                                if chainResults3.DataSets.Count != 0:
-                                                                    coverage3 = sum(chainResults3.DataSets.GetDataSetByName("Duration").GetValues()) / totalTime * 100
-                                                                else:
-                                                                    coverage3 = 0
-                                                                fo.write("%d %f %d %d %d 0 %d %f %d %d %d %d %d %f %d %d %d %d %.1f %.1f %.1f\n", a1, a2, a3, a4, a5, aa1, aa2, aa3, aa4, aa5, aa6, aaa1, aaa2, aaa3, aaa4, aaa5, aaa6, coverage1, coverage2, coverage3)
-                        fo.close()                                                          
+                                            modify(keplerian2, aa1, aa2, aa3, aa4, aa5, aa6)
+                                            sat2.Propagator.QueryInterface(STKObjects.IAgVePropagatorJ4Perturbation).InitialState.Representation.Assign(keplerian2)
+                                            sat2.Propagator.QueryInterface(STKObjects.IAgVePropagatorJ4Perturbation).Propagate()
+                                            for aaa1 in banchangzhou:
+                                                if aaa1 > aa1:
+                                                    break
+                                                for aaa2 in pianxinlv:
+                                                    for aaa3 in qingjiao:
+                                                        for aaa4 in jindidian:
+                                                            for aaa5 in shengjiaodian:
+                                                                for aaa6 in xiangwei:
+                                                                    modify(keplerian3, aaa1, aaa2, aaa3, aaa4, aaa5, aaa6)
+                                                                    sat3.Propagator.QueryInterface(STKObjects.IAgVePropagatorJ4Perturbation).InitialState.Representation.Assign(keplerian3)
+                                                                    sat3.Propagator.QueryInterface(STKObjects.IAgVePropagatorJ4Perturbation).Propagate()
+
+                                                                    # calculate
+                                                                    chain1.ComputeAccess()
+                                                                    chain2.ComputeAccess()
+                                                                    chain3.ComputeAccess()
+                                                                    chainResults1 = chainTemp1.DataProviders.GetDataPrvIntervalFromPath("Complete Access").Exec(sc2.StartTime, sc2.StopTime)
+                                                                    chainResults2 = chainTemp2.DataProviders.GetDataPrvIntervalFromPath("Complete Access").Exec(sc2.StartTime, sc2.StopTime)
+                                                                    chainResults3 = chainTemp3.DataProviders.GetDataPrvIntervalFromPath("Complete Access").Exec(sc2.StartTime, sc2.StopTime)
+                                                                    if chainResults1.DataSets.Count != 0:
+                                                                        coverage1 = sum(chainResults1.DataSets.GetDataSetByName("Duration").GetValues()) / totalTime * 100
+                                                                    else:
+                                                                        coverage1 = 0
+                                                                    if chainResults2.DataSets.Count != 0:
+                                                                        coverage2 = sum(chainResults2.DataSets.GetDataSetByName("Duration").GetValues()) / totalTime * 100
+                                                                    else:
+                                                                        coverage2 = 0
+                                                                    if chainResults3.DataSets.Count != 0:
+                                                                        coverage3 = sum(chainResults3.DataSets.GetDataSetByName("Duration").GetValues()) / totalTime * 100
+                                                                    else:
+                                                                        coverage3 = 0
+                                                                    data.append([a1, a2, a3, a4, a5, 0, aa1, aa2, aa3, aa4, aa5, aa6, aaa1, aaa2, aaa3, aaa4, aaa5, aaa6, coverage1, coverage2, coverage3])
+                                        try:
+                                            _thread.start_new_thread(write_data, (txtCount, data))
+                                            endTime = time.time()
+                                            print(endTime-startTime)
+                                        except:
+                                            print ("Error: 无法启动线程")                                                                                      
                     print("%d %f %d %d %d\n", a1, a2, a3, a4, a5)
+
+endTime = time.time()
+print(endTime-startTime)
