@@ -59,6 +59,10 @@ chainTemp2 = sc.Children.Item("ChainYuebei")
 chain2 = chainTemp2.QueryInterface(STKObjects.IAgChain)
 # chain2.Objects.AddObject(constellationTemp)
 # chain2.Objects.AddObject(yuebeiTemp)
+chainTemp3 = sc.Children.Item("ChainYuebei")
+chain3 = chainTemp3.QueryInterface(STKObjects.IAgChain)
+# chain3.Objects.AddObject(constellationTemp)
+# chain3.Objects.AddObject(yuebeiTemp)
 
 # 获取卫星1参数修改句柄
 sat1.SetPropagatorType(STKObjects.ePropagatorJ4Perturbation)
@@ -88,6 +92,7 @@ txtCount = 0
 
 # 一星计算
 for a1 in banchangzhou:
+    print("========================",a1)
     for a2 in pianxinlv:
         for a3 in qingjiao:
             for a4 in jindidian:
@@ -113,8 +118,10 @@ for a1 in banchangzhou:
                                             # calculate
                                             chain1.ComputeAccess()
                                             chain2.ComputeAccess()
+                                            chain3.ComputeAccess()
                                             chainResults1 = chainTemp1.DataProviders.GetDataPrvIntervalFromPath("Complete Access").Exec(sc2.StartTime, sc2.StopTime)
                                             chainResults2 = chainTemp2.DataProviders.GetDataPrvIntervalFromPath("Complete Access").Exec(sc2.StartTime, sc2.StopTime)
+                                            chainResults3 = chainTemp3.DataProviders.GetDataPrvIntervalFromPath("Complete Access").Exec(sc2.StartTime, sc2.StopTime)
                                             if chainResults1.DataSets.Count != 0:
                                                 coverage1 = sum(chainResults1.DataSets.GetDataSetByName("Duration").GetValues()) / totalTime * 100
                                             else:
@@ -122,8 +129,12 @@ for a1 in banchangzhou:
                                             if chainResults2.DataSets.Count != 0:
                                                 coverage2 = sum(chainResults2.DataSets.GetDataSetByName("Duration").GetValues()) / totalTime * 100
                                             else:
-                                                coverage2 = 0    
-                                            myFo.write("%d %.0f %d %d %d %d %d %.0f %d %d %d %d %.0f %.0f\n" % (a1,a2,a3,a4,a5,0,aa1,aa2,aa3,aa4,aa5,aa6,coverage1,coverage2))
+                                                coverage2 = 0
+                                            if chainResults3.DataSets.Count != 0:
+                                                coverage3 = sum(chainResults3.DataSets.GetDataSetByName("Duration").GetValues()) / totalTime * 100
+                                            else:
+                                                coverage3 = 0    
+                                            myFo.write("%d %.0f %d %d %d %d %d %.0f %d %d %d %d %.0f %.0f %.0f" % (a1,a2,a3,a4,a5,0,aa1,aa2,aa3,aa4,aa5,aa6,coverage1,coverage2,coverage3))
                     endTime = time.time()
                     print(endTime-startTime)
                 myFo.close()
