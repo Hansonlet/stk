@@ -81,12 +81,12 @@ keplerian2.Orientation.AscNodeType = STKObjects.eAscNodeRAAN
 keplerian2.LocationType = STKObjects.eLocationTrueAnomaly
 
 # 初始化参数
-banchangzhou = [4737, 5737, 6737]           # 3000-5000
-pianxinlv = [0, 0.15, 0.3, 0.45]                   # 0-0.5
-qingjiao = [0, 30, 60]                  # 0-90
-jindidian = [0, 60, 120]               # 0-360
-shengjiaodian = [0, 20, 40, 60]             # 0-90
-xiangwei = [0, 90, 180]                # 0-360
+banchangzhou = [4737, 4937, 5137, 5337, 5537, 5737, 5937]           # 3000-5000
+pianxinlv = [0, 0.1, 0.2, 0.3, 0.4, 0.5]                   # 0-0.5
+qingjiao = [0, 10, 20, 30, 40, 50, 60]                  # 0-90
+jindidian = [0]               # 0-360
+shengjiaodian = [0]             # 0-90
+xiangwei = [0, 30, 60, 90, 120, 150, 180]                # 0-360
 totalTime = 27 * 24 * 60 * 60 + 4 * 60 * 60
 txtCount = 0
 
@@ -134,7 +134,7 @@ for a1 in banchangzhou:
                                                 coverage3 = sum(chainResults3.DataSets.GetDataSetByName("Duration").GetValues()) / totalTime * 100
                                             else:
                                                 coverage3 = 0    
-                                            myFo.write("%d %.0f %d %d %d %d %d %.0f %d %d %d %d %.0f %.0f %.0f\n" % (a1,a2,a3,a4,a5,0,aa1,aa2,aa3,aa4,aa5,aa6,coverage1,coverage2,coverage3))
+                                            myFo.write("%d %.0f %d %d %d %d %.0f %d %d %d %d %.0f %.0f %.0f\n" % (a1,a2,a3,a4,a5,aa1,aa2,aa3,aa4,aa5,aa6,coverage1,coverage2,coverage3))
                     endTime = time.time()
                     print(endTime-startTime)
                 myFo.close()
