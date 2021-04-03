@@ -81,24 +81,25 @@ keplerian2.Orientation.AscNodeType = STKObjects.eAscNodeRAAN
 keplerian2.LocationType = STKObjects.eLocationTrueAnomaly
 
 # 初始化参数
-banchangzhou = [4737, 4937, 5137, 5337, 5537, 5737, 5937]           # 3000-5000
+banchangzhou = [4737, 4937, 5137, 5337, 5537, 5737, 5937]
+banchangzhou2 = [5537, 5737, 5937]           # 3000-5000
 pianxinlv = [0, 0.1, 0.2, 0.3, 0.4, 0.5]                   # 0-0.5
 qingjiao = [0, 10, 20, 30, 40, 50, 60]                  # 0-90
 jindidian = [0]               # 0-360
 shengjiaodian = [0]             # 0-90
 xiangwei = [0, 30, 60, 90, 120, 150, 180]                # 0-360
 totalTime = 27 * 24 * 60 * 60 + 4 * 60 * 60
-txtCount = 0
+txtCount = 126
 
 # 一星计算
-for a1 in banchangzhou:
+for a1 in banchangzhou2:
     print("========================",a1)
     for a2 in pianxinlv:
+        txtCount = txtCount + 1
+        txtStr = "data" + str(txtCount) + ".txt"
+        myFo = open(txtStr, "w")
         for a3 in qingjiao:
             for a4 in jindidian:
-                txtCount = txtCount + 1
-                txtStr = "data" + str(txtCount) + ".txt"
-                myFo = open(txtStr, "w")
                 for a5 in shengjiaodian:
                     modify(keplerian1, a1, a2, a3, a4, a5, 0)
                     sat1.Propagator.QueryInterface(STKObjects.IAgVePropagatorJ4Perturbation).InitialState.Representation.Assign(keplerian1)
@@ -134,10 +135,11 @@ for a1 in banchangzhou:
                                                 coverage3 = sum(chainResults3.DataSets.GetDataSetByName("Duration").GetValues()) / totalTime * 100
                                             else:
                                                 coverage3 = 0    
-                                            myFo.write("%d %.1f %d %d %d %d %.1f %d %d %d %d %.1f %.1f %.1f\n" % (a1,a2,a3,a4,a5,aa1,aa2,aa3,aa4,aa5,aa6,coverage1,coverage2,coverage3))
-                    endTime = time.time()
-                    print(endTime-startTime)
-                myFo.close()
+                                            myFo.write("%d %.1f %d %d %d %d %.1f %d %d %d %d %.2f %.2f %.2f\n" % (a1,a2,a3,a4,a5,aa1,aa2,aa3,aa4,aa5,aa6,coverage1,coverage2,coverage3))
+        endTime = time.time()
+        print(endTime-startTime)
+        print("%d %.1f %d %d %d\t%d %.1f %d %d %d %d" % (a1,a2,a3,a4,a5,aa1,aa2,aa3,aa4,aa5,aa6))
+        myFo.close()
                 
 endTime = time.time()
-print(endTime-startTime)
+print("================ end of simulation ================/n", endTime-startTime)
