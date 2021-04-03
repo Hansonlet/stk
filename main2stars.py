@@ -134,7 +134,7 @@ for a1 in banchangzhou:
                                                 coverage3 = sum(chainResults3.DataSets.GetDataSetByName("Duration").GetValues()) / totalTime * 100
                                             else:
                                                 coverage3 = 0    
-                                            myFo.write("%d %.0f %d %d %d %d %.0f %d %d %d %d %.0f %.0f %.0f\n" % (a1,a2,a3,a4,a5,aa1,aa2,aa3,aa4,aa5,aa6,coverage1,coverage2,coverage3))
+                                            myFo.write("%d %.1f %d %d %d %d %.1f %d %d %d %d %.1f %.1f %.1f\n" % (a1,a2,a3,a4,a5,aa1,aa2,aa3,aa4,aa5,aa6,coverage1,coverage2,coverage3))
                     endTime = time.time()
                     print(endTime-startTime)
                 myFo.close()
