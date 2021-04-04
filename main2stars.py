@@ -89,7 +89,7 @@ jindidian = [0]               # 0-360
 shengjiaodian = [0]             # 0-90
 xiangwei = [0, 30, 60, 90, 120, 150, 180]                # 0-360
 totalTime = 27 * 24 * 60 * 60 + 4 * 60 * 60
-txtCount = 168
+txtCount = 180
 
 # 一星计算
 for a1 in banchangzhou2:
