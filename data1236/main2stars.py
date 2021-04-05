@@ -47,14 +47,22 @@ satTemp1 = sc.Children.Item('sat1')
 sat1 = satTemp1.QueryInterface(STKObjects.IAgSatellite)
 satTemp2 = sc.Children.Item('sat2')
 sat2 = satTemp2.QueryInterface(STKObjects.IAgSatellite)
+# constellation.Objects.AddObject(sat1)
+# constellation.Objects.AddObject(sat2)
 
 # 获取链路
 chainTemp1 = sc.Children.Item("ChainChidao")
 chain1 = chainTemp1.QueryInterface(STKObjects.IAgChain)
-chainTemp2 = sc.Children.Item("ChainNanji")
+# chain1.Objects.AddObject(constellationTemp)
+# chain1.Objects.AddObject(chidaoTemp)
+chainTemp2 = sc.Children.Item("ChainYuebei")
 chain2 = chainTemp2.QueryInterface(STKObjects.IAgChain)
+# chain2.Objects.AddObject(constellationTemp)
+# chain2.Objects.AddObject(yuebeiTemp)
 chainTemp3 = sc.Children.Item("ChainYuebei")
 chain3 = chainTemp3.QueryInterface(STKObjects.IAgChain)
+# chain3.Objects.AddObject(constellationTemp)
+# chain3.Objects.AddObject(yuebeiTemp)
 
 # 获取卫星1参数修改句柄
 sat1.SetPropagatorType(STKObjects.ePropagatorJ4Perturbation)
@@ -73,17 +81,17 @@ keplerian2.Orientation.AscNodeType = STKObjects.eAscNodeRAAN
 keplerian2.LocationType = STKObjects.eLocationTrueAnomaly
 
 # 初始化参数
-banchangzhou = [6500]                                           # 3000-5000
-pianxinlv = [0, 0.1, 0.2, 0.3, 0.4]                             # 0-0.5
-qingjiao = [0, 10, 20, 30, 40, 50, 60]                          # 0-90
-jindidian = [0, 30, 60, 90, 120, 150, 180]                      # 0-360
-shengjiaodian = [0]                                             # 0-90
-xiangwei = [0, 30, 60, 90, 120, 150, 180]                       # 0-360
-totalTime = 27 * 24 * 60 * 60 + 7 * 60 * 60                     # 2358000
-txtCount = 2
+banchangzhou = [4737, 4937, 5137, 5337, 5537, 5737, 5937]   # 3000-5000
+pianxinlv = [0, 0.1, 0.2, 0.3, 0.4, 0.5]                                # 0-0.5
+qingjiao = [0, 10, 20, 30, 40, 50, 60]                                  # 0-90
+jindidian = [0]                              # 0-360
+shengjiaodian = [0]                                                     # 0-90
+xiangwei = [0, 30, 60, 90, 120, 150, 180]                               # 0-360
+totalTime = 27 * 24 * 60 * 60 + 4 * 60 * 60
+txtCount = 0
 
 # 一星计算
-for a1 in banchangzhou:
+for a1 in banchangzhou2:
     for a2 in pianxinlv:
         print("========================",a2)
         for a3 in qingjiao:
