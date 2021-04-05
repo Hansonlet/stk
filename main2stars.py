@@ -82,14 +82,14 @@ keplerian2.LocationType = STKObjects.eLocationTrueAnomaly
 
 # 初始化参数
 banchangzhou = [4737, 4937, 5137, 5337, 5537, 5737, 5937]
-banchangzhou2 = [5937,5737]           # 3000-5000
-pianxinlv = [0.5, 0.4, 0, 0.1, 0.2, 0.3]                   # 0-0.5
+banchangzhou2 = [6137, 6337]           # 3000-5000
+pianxinlv = [0, 0.1, 0.2, 0.3, 0.4, 0.5]                   # 0-0.5
 qingjiao = [0, 10, 20, 30, 40, 50, 60]                  # 0-90
 jindidian = [0]               # 0-360
 shengjiaodian = [0]             # 0-90
 xiangwei = [0, 30, 60, 90, 120, 150, 180]                # 0-360
 totalTime = 27 * 24 * 60 * 60 + 4 * 60 * 60
-txtCount = 180
+txtCount = 187
 
 # 一星计算
 for a1 in banchangzhou2:
