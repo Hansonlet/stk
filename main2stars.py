@@ -75,27 +75,25 @@ keplerian2.LocationType = STKObjects.eLocationTrueAnomaly
 # 初始化参数
 banchangzhou = [6500]                                           # 3000-5000
 pianxinlv = [0, 0.1, 0.2, 0.3, 0.4]                             # 0-0.5
-pianxinlv2 = [0.1, 0.2, 0.3, 0.4]
+pianxinlv2 = [0.3, 0.4]
 qingjiao = [0, 10, 20, 30, 40, 50, 60]                          # 0-90
 jindidian = [0, 30, 60, 90, 120, 150, 180]                      # 0-360
 shengjiaodian = [0]                                             # 0-90
 xiangwei = [0, 30, 60, 90, 120, 150, 180]                       # 0-360
 totalTime = 27 * 24 * 60 * 60 + 7 * 60 * 60                     # 2358000
-txtCount = 13
+txtCount = 26
 
 # 一星计算
 for a1 in banchangzhou:
     for a2 in pianxinlv2:
-        print("========================",a2)
+        print("========================", a2)
         for a3 in qingjiao:
-            if (float(a2) == 0.1) & (a3 < 30):
-                continue
+            #if (float(a2) == 0.2) & (a3 == 0):
+                #continue
             txtCount = txtCount + 1
             txtStr = "data" + str(txtCount) + ".txt"
             myFo = open(txtStr, "w")
             for a4 in jindidian:
-                if (float(a2) == 0.1) & (a3 == 30) & (a4 < 30):
-                    continue
                 for a5 in shengjiaodian:
                     modify(keplerian1, a1, a2, a3, a4, a5, 0)
                     sat1.Propagator.QueryInterface(STKObjects.IAgVePropagatorJ4Perturbation).InitialState.Representation.Assign(keplerian1)
@@ -104,8 +102,6 @@ for a1 in banchangzhou:
                         if aa1 > a1:
                             break
                         for aa2 in pianxinlv:
-                            if (float(a2) == 0.1) & (a3 == 30) & (a4 == 30) & (aa2 < 0.4) :
-                                continue
                             for aa3 in qingjiao:
                                 for aa4 in jindidian:
                                     for aa5 in shengjiaodian:
