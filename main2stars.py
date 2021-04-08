@@ -75,21 +75,21 @@ keplerian2.LocationType = STKObjects.eLocationTrueAnomaly
 # 初始化参数
 banchangzhou = [6500]                                           # 3000-5000
 pianxinlv = [0, 0.1, 0.2, 0.3, 0.4]                             # 0-0.5
-pianxinlv2 = [0.3, 0.4]
+pianxinlv2 = [0.4, 0.3]
 qingjiao = [0, 10, 20, 30, 40, 50, 60]                          # 0-90
 jindidian = [0, 30, 60, 90, 120, 150, 180]                      # 0-360
 shengjiaodian = [0]                                             # 0-90
 xiangwei = [0, 30, 60, 90, 120, 150, 180]                       # 0-360
 totalTime = 27 * 24 * 60 * 60 + 7 * 60 * 60                     # 2358000
-txtCount = 26
+txtCount = 34
 
 # 一星计算
 for a1 in banchangzhou:
     for a2 in pianxinlv2:
         print("========================", a2)
         for a3 in qingjiao:
-            #if (float(a2) == 0.2) & (a3 == 0):
-                #continue
+            if (float(a2) == 0.3) & (a3 < 60):
+                continue
             txtCount = txtCount + 1
             txtStr = "data" + str(txtCount) + ".txt"
             myFo = open(txtStr, "w")
