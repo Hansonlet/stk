@@ -13,8 +13,8 @@ pr = cProfile.Profile()
 pr.enable()
 
 # gobal parms
-item_size = 100
-gen = 200
+item_size = 10
+gen = 100
 totalTime = 27 * 24 * 60 * 60 + 7 * 60 * 60                 # 2358000
 startTime = time.time()
 
@@ -70,7 +70,7 @@ def import_init_data():
         data.append(line_data[0 : 10])
     fo.close()
     np.random.shuffle(data)
-    return data[0:501]
+    return data[0:item_size]
 
 
 def modify(keplerian, a2, a3, a4, a5):
@@ -205,7 +205,6 @@ def init():
     #         print(i)
 
     group = import_init_data()
-    print("======================================================", len(data))
     scores = [0 for col in range(item_size)]
     scores = cal(group, scores)
 
