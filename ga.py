@@ -13,8 +13,8 @@ pr = cProfile.Profile()
 pr.enable()
 
 # gobal parms
-item_size = 500
-gen = 150
+item_size = 100
+gen = 200
 totalTime = 27 * 24 * 60 * 60 + 7 * 60 * 60                 # 2358000
 startTime = time.time()
 
@@ -51,13 +51,26 @@ keplerian1.Orientation.AscNodeType = STKObjects.eAscNodeRAAN
 keplerian1.LocationType = STKObjects.eLocationTrueAnomaly
 sat2.SetPropagatorType(STKObjects.ePropagatorJ4Perturbation)
 J4Propagator2 = sat2.Propagator.QueryInterface(
-    STKObjects.IAgVePropagatorJ4Perturbation)
+    STKObjects.IAgVePropagatorJ4Perturbation) 
 keplerian2 = J4Propagator2.InitialState.Representation.ConvertTo(
     STKUtil.eOrbitStateClassical).QueryInterface(STKObjects.IAgOrbitStateClassical)
 keplerian2.SizeShapeType = STKObjects.eSizeShapeSemimajorAxis
 keplerian2.Orientation.AscNodeType = STKObjects.eAscNodeRAAN
 keplerian2.LocationType = STKObjects.eLocationTrueAnomaly
 print("---------------- finish STK init ----------------")
+
+
+def import_init_data():
+    data = []
+    fo = open("ga_good_init_data.txt", "r")
+    for line in fo:
+        line_data = line.split(" ")
+        line_data[-1] = line_data[-1][0 : -1]
+        line_data = list(map(float, line_data))
+        data.append(line_data[0 : 10])
+    fo.close()
+    np.random.shuffle(data)
+    return data[0:501]
 
 
 def modify(keplerian, a2, a3, a4, a5):
@@ -70,8 +83,7 @@ def modify(keplerian, a2, a3, a4, a5):
     # degrees 近地点
     keplerian.Orientation.ArgOfPerigee = a4
     # RANN 设置轨道位置
-    keplerian.Orientation.AscNode.QueryInterface(
-        STKObjects.IAgOrientationAscNodeRAAN).Value = a5
+    keplerian.Orientation.AscNode.QueryInterface(STKObjects.IAgOrientationAscNodeRAAN).Value = a5
     # 设置卫星在该轨道中的“相位”
     # keplerian.Location.QueryInterface(STKObjects.IAgClassicalLocationTrueAnomaly).Value = a6
 
@@ -167,38 +179,33 @@ def cal_once(group):
 
 def init():
     print("---------------- begin GA init ----------------")
-    group = [[0 for col in range(10)] for row in range(item_size)]
-    for i in range(item_size):
-        while 1:
-            # 半长轴
-            group[i][0] = 6500
-            group[i][5] = 6500
-            # 偏心率,0-0.5
-            group[i][1] = random.random()/2
-            group[i][6] = random.random()/2
-            # 倾角,0-90
-            group[i][2] = random.random()*90
-            group[i][7] = random.random()*90
-            # 近地点,0-180
-            group[i][3] = random.random()*180
-            group[i][8] = random.random()*180
-            # 升交点,0-180
-            group[i][4] = random.random()*180
-            group[i][9] = random.random()*180
-            if (i>item_size/50) | (cal_once(group[i])>210):
-                break
-        print(i)
+    # group = [[0 for col in range(10)] for row in range(item_size)]
+    # for i in range(item_size):
+    #     while 1:
+    #         # 半长轴
+    #         group[i][0] = 6500
+    #         group[i][5] = 6500
+    #         # 偏心率,0-0.4
+    #         group[i][1] = random.random()/2.5
+    #         group[i][6] = random.random()/2.5
+    #         # 倾角,0-90
+    #         group[i][2] = random.random()*90
+    #         group[i][7] = random.random()*90
+    #         # 近地点,0-180
+    #         group[i][3] = random.random()*180
+    #         group[i][8] = random.random()*180
+    #         # 升交点,0-180
+    #         group[i][4] = random.random()*180
+    #         group[i][9] = random.random()*180
+    #         # if (i>item_size/1) | (
+    #         temp_score = cal_once(group[i])
+    #         if temp_score > 200:
+    #             print(i,temp_score)
+    #             break
+    #         print(i)
 
-    # group[0][0]=6500
-    # group[0][1]=0.49
-    # group[0][2]=54
-    # group[0][3]=96
-    # group[0][4]=1
-    # group[0][5]=6500
-    # group[0][6]=0.49
-    # group[0][7]=60
-    # group[0][8]=89
-    # group[0][9]=178
+    group = import_init_data()
+    print("======================================================", len(data))
     scores = [0 for col in range(item_size)]
     scores = cal(group, scores)
 
@@ -255,7 +262,7 @@ def variation(group):
         if (pos == 0) | (pos == 5):
             continue
         elif (pos == 1) | (pos == 6):
-            group[num][pos] = random.random()/2
+            group[num][pos] = random.random()/2.5
         elif (pos == 2) | (pos == 7):
             group[num][pos] = random.random()*90
         elif (pos == 3) | (pos == 8):
