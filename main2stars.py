@@ -80,14 +80,14 @@ jindidian = [0, 30, 60, 90, 120, 150, 180]                  # 0-360
 shengjiaodian = [0, 30, 60, 90, 120, 150, 180]              # 0-90
 xiangwei = [180]                                            # 0-360
 totalTime = 27 * 24 * 60 * 60 + 7 * 60 * 60                 # 2358000
-txtCount = 4
+txtCount = 5
 
 # 一星计算
 for a1 in banchangzhou:
     for a2 in pianxinlv:
         for a3 in qingjiao:
             print("========================", a2, a3)
-            if (a3 == 30) | (a3 == 45) | (a3 == 60) | ( (a2==0) & (a3==0) ):
+            if (a2==0):
                 continue
             txtCount = txtCount + 1
             txtStr = "data" + str(txtCount) + ".txt"
