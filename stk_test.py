@@ -10,9 +10,7 @@ def import_data():
     files = os.listdir("./data")
     train = []
     label = []
-    # num=0
-    # num1=0
-    # myFo = open("ga_good_init_data.txt", "w")
+    myFo = open("ga_good_init_data.txt", "w")
     for file in files:
         file = "data/" + file
         fo = open(file, "r")
@@ -31,24 +29,18 @@ def import_data():
             line_data[4]=(line_data[4]+30)/210
             line_data[9]=(line_data[9]+30)/210
 
-            line_data[10]=line_data[10]+line_data[11]#+line_data[12]
+            line_data[10]=line_data[10]+line_data[11]+line_data[12]
+            
             train.append(line_data[0 : 10])
             label.append(line_data[10])
-            # if(line_data[10]>210)&(line_data[10]<220):
-            #     myFo.write("%d %.1f %d %d %d %d %.1f %d %d %d\n" % (line_data[0], line_data[1],line_data[2],line_data[3],line_data[4],line_data[5],line_data[6],line_data[7],line_data[8],line_data[9]))
-            #     num1+=1
-            # if(line_data[10]>230):
-            #     num+=1
         fo.close()
     np.random.shuffle(train)
     np.random.shuffle(label)
-    train_amount = round(len(train))
+    train_amount = round(len(train) * 0.8)
     training_data = train[0 : train_amount]
     training_label = label[0 : train_amount]
     test_data = train[train_amount : len(train)]
     test_label = label[train_amount : len(label)]
-    # print("--------------",num,num1)
-    # myFo.close()
     return training_data, training_label, test_data, test_label
 
 
@@ -82,17 +74,16 @@ print("label: ", training_label[1])
 
 # nerual network
 model = Sequential()
-model.add(Dense(units=64, activation='relu', input_dim=10))#kernel_regularizer=regularizers.l2(0.1)
-# model.add(tf.keras.layers.Dropout(0.5))
-for i in range(100):
-    model.add(Dense(units=512, activation='relu'))
+model.add(Dense(units=32, activation='relu', input_dim=10))#kernel_regularizer=regularizers.l2(0.1)
 # model.add(tf.keras.layers.Dropout(0.5))
 model.add(Dense(units=64, activation='relu'))
+# model.add(tf.keras.layers.Dropout(0.5))
+model.add(Dense(units=32, activation='relu'))
 model.add(Dense(units=8, activation='relu'))
 model.add(Dense(units=1, activation='linear'))
 model.compile(optimizer='adam', loss='mse', metrics=['mae']) 
 
-history = model.fit(training_data, training_label, epochs=100, batch_size=128, verbose=1)# 
+history = model.fit(training_data, training_label, epochs=100, batch_size=32, verbose=1)# 
 # validation_data=(test_data,test_label), validation_freq=1) 
 # print(model.summary())
 print("===================================================")
