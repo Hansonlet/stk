@@ -14,7 +14,7 @@ pr.enable()
 
 # gobal parms
 item_size = 100
-gen = 200
+gen = 50
 totalTime = 27 * 24 * 60 * 60 + 7 * 60 * 60                 # 2358000
 startTime = time.time()
 
@@ -60,22 +60,22 @@ keplerian2.LocationType = STKObjects.eLocationTrueAnomaly
 print("---------------- finish STK init ----------------")
 
 
-def import_init_data():
-    data = []
-    fo = open("ga_good_init_data.txt", "r")
-    for line in fo:
-        line_data = line.split(" ")
-        line_data[-1] = line_data[-1][0 : -1]
-        line_data = list(map(float, line_data))
-        data.append(line_data[0 : 10])
-    fo.close()
-    np.random.shuffle(data)
-    return data[0:501]
+# def import_init_data():
+#     data = []
+#     fo = open("ga_good_init_data.txt", "r")
+#     for line in fo:
+#         line_data = line.split(" ")
+#         line_data[-1] = line_data[-1][0 : -1]
+#         line_data = list(map(float, line_data))
+#         data.append(line_data[0 : 10])
+#     fo.close()
+#     np.random.shuffle(data) 
+#     return data[0:item_size]
 
 
-def modify(keplerian, a2, a3, a4, a5):
+def modify(keplerian, a1, a2, a3, a4, a5, a6):
     # 半长轴长度
-    # keplerian.SizeShape.QueryInterface(STKObjects.IAgClassicalSizeShapeSemimajorAxis).SemiMajorAxis = a1
+    keplerian.SizeShape.QueryInterface(STKObjects.IAgClassicalSizeShapeSemimajorAxis).SemiMajorAxis = a1
     # 偏心率
     keplerian.SizeShape.QueryInterface(STKObjects.IAgClassicalSizeShapeSemimajorAxis).Eccentricity = a2
     # degrees 倾角
@@ -85,18 +85,18 @@ def modify(keplerian, a2, a3, a4, a5):
     # RANN 设置轨道位置
     keplerian.Orientation.AscNode.QueryInterface(STKObjects.IAgOrientationAscNodeRAAN).Value = a5
     # 设置卫星在该轨道中的“相位”
-    # keplerian.Location.QueryInterface(STKObjects.IAgClassicalLocationTrueAnomaly).Value = a6
+    keplerian.Location.QueryInterface(STKObjects.IAgClassicalLocationTrueAnomaly).Value = a6
 
 
 def cal(group, scores):
     for i in range(item_size):
         # 调整
-        modify(keplerian1, group[i][1], group[i][2], group[i][3], group[i][4])
+        modify(keplerian1, group[i][0], group[i][1], group[i][2], group[i][3], group[i][4], 0)
         sat1.Propagator.QueryInterface(
             STKObjects.IAgVePropagatorJ4Perturbation).InitialState.Representation.Assign(keplerian1)
         sat1.Propagator.QueryInterface(
             STKObjects.IAgVePropagatorJ4Perturbation).Propagate()
-        modify(keplerian2, group[i][6], group[i][7], group[i][8], group[i][9])
+        modify(keplerian2, group[i][0], group[i][1], group[i][2], group[i][3], group[i][4], group[i][5])
         sat2.Propagator.QueryInterface(
             STKObjects.IAgVePropagatorJ4Perturbation).InitialState.Representation.Assign(keplerian2)
         sat2.Propagator.QueryInterface(
@@ -135,12 +135,12 @@ def cal(group, scores):
 
 def cal_once(group):
     # 调整
-    modify(keplerian1, group[1], group[2], group[3], group[4])
+    modify(keplerian1, group[0], group[1], group[2], group[3], group[4], 0)
     sat1.Propagator.QueryInterface(
         STKObjects.IAgVePropagatorJ4Perturbation).InitialState.Representation.Assign(keplerian1)
     sat1.Propagator.QueryInterface(
         STKObjects.IAgVePropagatorJ4Perturbation).Propagate()
-    modify(keplerian2, group[6], group[7], group[8], group[9])
+    modify(keplerian2, group[0], group[1], group[2], group[3], group[4], group[5])
     sat2.Propagator.QueryInterface(
         STKObjects.IAgVePropagatorJ4Perturbation).InitialState.Representation.Assign(keplerian2)
     sat2.Propagator.QueryInterface(
@@ -179,42 +179,44 @@ def cal_once(group):
 
 def init():
     print("---------------- begin GA init ----------------")
-    # group = [[0 for col in range(10)] for row in range(item_size)]
-    # for i in range(item_size):
-    #     while 1:
-    #         # 半长轴
-    #         group[i][0] = 6500
-    #         group[i][5] = 6500
-    #         # 偏心率,0-0.4
-    #         group[i][1] = random.random()/2.5
-    #         group[i][6] = random.random()/2.5
-    #         # 倾角,0-90
-    #         group[i][2] = random.random()*90
-    #         group[i][7] = random.random()*90
-    #         # 近地点,0-180
-    #         group[i][3] = random.random()*180
-    #         group[i][8] = random.random()*180
-    #         # 升交点,0-180
-    #         group[i][4] = random.random()*180
-    #         group[i][9] = random.random()*180
-    #         # if (i>item_size/1) | (
-    #         temp_score = cal_once(group[i])
-    #         if temp_score > 200:
-    #             print(i,temp_score)
-    #             break
-    #         print(i)
+    group = [[0 for col in range(6)] for row in range(item_size)]
+    for i in range(item_size):
+        while 1:
+            # 半长轴
+            group[i][0] = 6500
+            # group[i][5] = 6500
+            # 偏心率,0-0.4
+            group[i][1] = random.random()/2.5
+            # group[i][6] = random.random()/2.5
+            # 倾角,0-90
+            group[i][2] = random.random()*90
+            # group[i][7] = random.random()*90
+            # 近地点,0-180
+            group[i][3] = random.random()*360
+            # group[i][8] = random.random()*180
+            # 升交点,0-180
+            group[i][4] = random.random()*90
+            # group[i][9] = random.random()*180
+            # 相位，0-360
+            group[i][5] = (random.random()+0.01)*354
+            # if (i>item_size/1) | (
+            # if (i<=item_size/4):
+            #     temp_score = cal_once(group[i])
+            # if (i>item_size/4) | (temp_score > 200):
+            #     print(i,temp_score)
+            break
 
-    group = import_init_data()
-    print("======================================================", len(data))
+    # group = import_init_data()
     scores = [0 for col in range(item_size)]
     scores = cal(group, scores)
+    print("==== init scores:", scores)
 
     print("---------------- finish GA init ----------------")
     return [group, scores]
 
 
 def choose(group, scores):
-    new_group = [[0 for col in range(10)] for row in range(item_size)]
+    new_group = [[0 for col in range(6)] for row in range(item_size)]
     p_choose = [0 for col in range(item_size)]
     sum_score = sum(scores)
     accumulate = 0
@@ -247,7 +249,7 @@ def cross(group):
         num_b = random.randint(0, item_size-2)
         times_per_cross = random.randint(1, 2)
         for j in range(times_per_cross):
-            pos = random.randint(0, 9)
+            pos = random.randint(0, 5)
             temp = group[num_a][pos]
             group[num_a][pos] = group[num_b][pos]
             group[num_b][pos] = temp
@@ -258,24 +260,26 @@ def variation(group):
     times = int(item_size / 100 * 40)
     for i in range(times):
         num = random.randint(0, item_size-2)
-        pos = random.randint(0, 9)
-        if (pos == 0) | (pos == 5):
+        pos = random.randint(0, 5)
+        if (pos == 0):
             continue
-        elif (pos == 1) | (pos == 6):
+        elif (pos == 1):
             group[num][pos] = random.random()/2.5
-        elif (pos == 2) | (pos == 7):
+        elif (pos == 2):
             group[num][pos] = random.random()*90
-        elif (pos == 3) | (pos == 8):
-            group[num][pos] = random.random()*180
-        elif (pos == 4) | (pos == 9):
-            group[num][pos] = random.random()*180
+        elif (pos == 3):
+            group[num][pos] = random.random()*360
+        elif (pos == 4):
+            group[num][pos] = random.random()*90
+        elif (pos == 5):
+            group[num][pos] = (random.random()+0.01)*354
     return group
 
 def main_ga():
     [group, scores] = init()
     best_scores = [0 for col in range(gen+1)]
     ave_scores = [0 for col in range(gen+1)]
-    best_items = [[0 for col in range(10)] for row in range(gen+1)]
+    best_items = [[0 for col in range(6)] for row in range(gen+1)]
     best_scores[0] = max(scores)
     ave_scores[0] = np.mean(scores)
     best_items[0][:] = group[scores.index(max(scores))][:]
