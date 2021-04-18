@@ -13,8 +13,8 @@ pr = cProfile.Profile()
 pr.enable()
 
 # gobal parms
-item_size = 100
-gen = 200
+item_size = 500
+gen = 150
 totalTime = 27 * 24 * 60 * 60 + 7 * 60 * 60                 # 2358000
 startTime = time.time()
 
@@ -70,7 +70,7 @@ def import_init_data():
         data.append(line_data[0 : 10])
     fo.close()
     np.random.shuffle(data)
-    return data[0:501]
+    return data[0:item_size]
 
 
 def modify(keplerian, a2, a3, a4, a5):
@@ -205,7 +205,6 @@ def init():
     #         print(i)
 
     group = import_init_data()
-    print("======================================================", len(data))
     scores = [0 for col in range(item_size)]
     scores = cal(group, scores)
 
@@ -241,7 +240,7 @@ def choose(group, scores):
 
 
 def cross(group):
-    times = int(item_size / 100 * 40)
+    times = int(item_size / 100 * 50)
     for i in range(times):
         num_a = random.randint(0, item_size-2)
         num_b = random.randint(0, item_size-2)
@@ -262,7 +261,7 @@ def variation(group):
         if (pos == 0) | (pos == 5):
             continue
         elif (pos == 1) | (pos == 6):
-            group[num][pos] = random.random()/2.5
+            group[num][pos] = random.random()/2
         elif (pos == 2) | (pos == 7):
             group[num][pos] = random.random()*90
         elif (pos == 3) | (pos == 8):
