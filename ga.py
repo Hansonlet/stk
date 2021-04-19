@@ -130,7 +130,6 @@ def cal(group, scores):
 
         # 得分
         scores[i] = coverage1 + coverage2 + coverage3
-
     return scores
 
 def cal_once(group):
@@ -301,6 +300,7 @@ def main_ga():
         print(best_scores[i+1])
         print(ave_scores[i+1])
         print(best_items[i+1][:])
+        print("================================================\n\n\n")
 
     endTime = time.time()
     print("time: ", endTime - startTime)
