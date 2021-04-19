@@ -7,48 +7,42 @@ from tensorflow.keras.layers import Dense
 from tensorflow.keras import regularizers
 
 def import_data():
-    files = os.listdir("./data")
+    path = "./one_circle/"
+    files = os.listdir(path)
     train = []
     label = []
-    # num=0
-    # num1=0
-    # myFo = open("ga_good_init_data.txt", "w")
     for file in files:
-        file = "data/" + file
+        file = path + file
         fo = open(file, "r")
         for line in fo:
             line_data = line.split(" ")
             line_data[-1] = line_data[-1][0 : -1]
             line_data = list(map(float, line_data))
-            line_data[0]=(line_data[0]-4737)/6000
-            line_data[5]=(line_data[5]-4737)/6000
-            line_data[1]=(line_data[1])*2
-            line_data[6]=(line_data[6])*2
-            line_data[2]=(line_data[2]+10)/100
-            line_data[7]=(line_data[7]+10)/100
-            line_data[3]=(line_data[3]+30)/210
-            line_data[8]=(line_data[8]+30)/210
-            line_data[4]=(line_data[4]+30)/210
-            line_data[9]=(line_data[9]+30)/210
+            # line_data[0]=line_data[1]
+            # line_data[1]=line_data[2]
+            # line_data[2]=line_data[3]
+            # line_data[3]=line_data[4]
+            # line_data[4]=line_data[6]
+            # line_data[5]=line_data[7]
+            # line_data[6]=line_data[8]
+            # line_data[7]=line_data[9]
 
-            line_data[10]=line_data[10]+line_data[11]#+line_data[12]
-            train.append(line_data[0 : 10])
-            label.append(line_data[10])
+            line_data[6] = line_data[6]+line_data[7]+line_data[8]
+            train.append(line_data[0 : 6])
+            label.append(line_data[6])
             # if(line_data[10]>210)&(line_data[10]<220):
             #     myFo.write("%d %.1f %d %d %d %d %.1f %d %d %d\n" % (line_data[0], line_data[1],line_data[2],line_data[3],line_data[4],line_data[5],line_data[6],line_data[7],line_data[8],line_data[9]))
             #     num1+=1
             # if(line_data[10]>230):
             #     num+=1
         fo.close()
-    np.random.shuffle(train)
-    np.random.shuffle(label)
-    train_amount = round(len(train))
+    # np.random.shuffle(train)
+    # np.random.shuffle(label)
+    train_amount = round(len(train)*0.9)
     training_data = train[0 : train_amount]
     training_label = label[0 : train_amount]
     test_data = train[train_amount : len(train)]
     test_label = label[train_amount : len(label)]
-    # print("--------------",num,num1)
-    # myFo.close()
     return training_data, training_label, test_data, test_label
 
 
@@ -66,11 +60,12 @@ test_label = np.array(test_label)
 print(training_data[0])
 print(training_data[1])
 print(training_data[2])
-print(training_data[3])
 print(training_label[0])
+print(training_label[1])
+print(training_label[2])
 print("================================")
-print("label max:",max(training_label),max(test_label))
-print("label min:",min(training_label),min(test_label))
+print("label max:", max(training_label), max(test_label))
+print("label min:", min(training_label), min(test_label))
 print("================================")
 print("load ", len(training_data), " training data")
 print("load ", len(training_label), " training label")
@@ -82,24 +77,22 @@ print("label: ", training_label[1])
 
 # nerual network
 model = Sequential()
-model.add(Dense(units=64, activation='relu', input_dim=10))#kernel_regularizer=regularizers.l2(0.1)
-# model.add(tf.keras.layers.Dropout(0.5))
-for i in range(100):
-    model.add(Dense(units=512, activation='relu'))
-# model.add(tf.keras.layers.Dropout(0.5))
-model.add(Dense(units=64, activation='relu'))
+model.add(Dense(units=16, activation='relu', input_dim=6))#kernel_regularizer=regularizers.l2(0.1)
+for i in range(3):
+      model.add(Dense(units=64, activation='relu'))
+#     model.add(tf.keras.layers.Dropout(0.5))
 model.add(Dense(units=8, activation='relu'))
 model.add(Dense(units=1, activation='linear'))
 model.compile(optimizer='adam', loss='mse', metrics=['mae']) 
 
-history = model.fit(training_data, training_label, epochs=100, batch_size=128, verbose=1)# 
+history = model.fit(training_data, training_label, epochs=20, batch_size=128, verbose=1)# 
 # validation_data=(test_data,test_label), validation_freq=1) 
 # print(model.summary())
 print("===================================================")
 print(model.predict(test_data))
 
-loss_and_metrics = model.evaluate(test_data, test_label, batch_size=128)
-fore_data = model.predict(test_data, batch_size=128)  # 通过predict函数输出网络的预测值
+loss_and_metrics = model.evaluate(test_data, test_label, batch_size=32)
+fore_data = model.predict(test_data, batch_size=32)  # 通过predict函数输出网络的预测值
 
 fig1=plt.figure(1) # 图像1显示测试数据的房价和网络利用测试数据得到的预测房价
 plt.plot(test_label, label='real data')
