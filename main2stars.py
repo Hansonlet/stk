@@ -74,7 +74,8 @@ keplerian2.LocationType = STKObjects.eLocationTrueAnomaly
 
 # 初始化参数
 banchangzhou = [6500]                                                    # 3000-5000，可优化
-pianxinlv = [0.2, 0.25, 0.3, 0.35, 0.4]              # 0-0.5
+# pianxinlv = [0.2, 0.25, 0.3, 0.35, 0.4]              # 0-0.5
+pianxinlv = [0.4,0.35,0.3,0.25,0.2]
 qingjiao = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90]                       # 0-90
 jindidian = [0, 15, 30, 45, 60, 75, 90, 105, 120, 135, 150, 165, 180]    # 0-360,可优化
 shengjiaodian = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90]                  # 0-90
