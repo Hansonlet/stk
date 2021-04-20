@@ -7,10 +7,14 @@ from tensorflow.keras.layers import Dense
 from tensorflow.keras import regularizers
 
 def import_data():
-    path = "./one_circle/"
+    path = "./data/"
     files = os.listdir(path)
     train = []
     label = []
+    training_data = []
+    training_label = []
+    test_data = []
+    test_label = []
     for file in files:
         file = path + file
         fo = open(file, "r")
@@ -18,18 +22,25 @@ def import_data():
             line_data = line.split(" ")
             line_data[-1] = line_data[-1][0 : -1]
             line_data = list(map(float, line_data))
-            # line_data[0]=line_data[1]
-            # line_data[1]=line_data[2]
-            # line_data[2]=line_data[3]
-            # line_data[3]=line_data[4]
-            # line_data[4]=line_data[6]
-            # line_data[5]=line_data[7]
-            # line_data[6]=line_data[8]
-            # line_data[7]=line_data[9]
+            line_data[0]=line_data[1]
+            line_data[1]=line_data[2]
+            line_data[2]=line_data[3]
+            line_data[3]=line_data[4]
+            line_data[4]=line_data[6]
+            line_data[5]=line_data[7]
+            line_data[6]=line_data[8]
+            line_data[7]=line_data[9]
 
-            line_data[6] = line_data[6]+line_data[7]+line_data[8]
-            train.append(line_data[1 : 6])
-            label.append(line_data[6])
+            line_data[10] = line_data[10]+line_data[11]+line_data[12]
+            
+            if line_data[0]==0.2:
+                test_data.append(line_data[0 : 8])
+                test_label.append(line_data[10])
+            else:
+                training_data.append(line_data[0 : 8])
+                training_label.append(line_data[10])
+            # train.append(line_data[0 : 8])
+            # label.append(line_data[10])
             # if(line_data[10]>210)&(line_data[10]<220):
             #     myFo.write("%d %.1f %d %d %d %d %.1f %d %d %d\n" % (line_data[0], line_data[1],line_data[2],line_data[3],line_data[4],line_data[5],line_data[6],line_data[7],line_data[8],line_data[9]))
             #     num1+=1
@@ -38,11 +49,11 @@ def import_data():
         fo.close()
     # np.random.shuffle(train)
     # np.random.shuffle(label)
-    train_amount = round(len(train)*0.9)
-    training_data = train[0 : train_amount]
-    training_label = label[0 : train_amount]
-    test_data = train[train_amount : len(train)]
-    test_label = label[train_amount : len(label)]
+    # train_amount = round(len(train)*0.9)
+    # training_data = train[0 : train_amount]
+    # training_label = label[0 : train_amount]
+    # test_data = train[train_amount : len(train)]
+    # test_label = label[train_amount : len(label)]
     return training_data, training_label, test_data, test_label
 
 
@@ -77,7 +88,7 @@ print("label: ", training_label[1])
 
 # nerual network
 model = Sequential()
-model.add(Dense(units=16, activation='relu', input_dim=5))#kernel_regularizer=regularizers.l2(0.1)
+model.add(Dense(units=16, activation='relu', input_dim=8))#kernel_regularizer=regularizers.l2(0.1)
 for i in range(3):
       model.add(Dense(units=64, activation='relu'))
 #     model.add(tf.keras.layers.Dropout(0.5))
