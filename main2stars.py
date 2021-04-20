@@ -74,19 +74,22 @@ keplerian2.LocationType = STKObjects.eLocationTrueAnomaly
 
 # 初始化参数
 banchangzhou = [6500]                                                    # 3000-5000，可优化
-pianxinlv = [0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4]              # 0-0.5
+# pianxinlv = [0.2, 0.25, 0.3, 0.35, 0.4]              # 0-0.5
+pianxinlv = [0.35,0.3,0.25]
 qingjiao = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90]                       # 0-90
 jindidian = [0, 15, 30, 45, 60, 75, 90, 105, 120, 135, 150, 165, 180]    # 0-360,可优化
 shengjiaodian = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90]                  # 0-90
 xiangwei = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200, 210, 220, 230, 240, 250, 260, 270, 280, 290, 300, 310, 320, 330, 340, 350]     # 0-360
 totalTime = 27 * 24 * 60 * 60 + 7 * 60 * 60                     # 2358000
-txtCount = 0
+txtCount = 56
 
 # 一星计算
 for a1 in banchangzhou:
     for a2 in pianxinlv:
         for a3 in qingjiao:
             print("========================", a2, a3)
+            if (a2==0.35) & (a3<60):
+                continue
             txtCount = txtCount + 1
             txtStr = "data" + str(txtCount) + ".txt"
             myFo = open(txtStr, "w")
@@ -123,7 +126,7 @@ for a1 in banchangzhou:
                         myFo.write("%d %.2f %d %d %d %d %.3f %.3f %.3f\n" % (a1,a2,a3,a4,a5,aa6,coverage1,coverage2,coverage3))
             endTime = time.time()
             print(endTime-startTime)
-            print("%d %.2f %d %d %d\t%d" % (a1,a2,a3,a4,a5,aa6))
+            print("%d %.2f %d %d %d\t%d\t done" % (a1,a2,a3,a4,a5,aa6))
             myFo.close()
                 
 endTime = time.time()
