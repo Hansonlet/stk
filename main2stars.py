@@ -76,22 +76,26 @@ banchangzhou = [6500]                                           # 3000-5000，�
 pianxinlv = [0, 0.15, 0.3, 0.45]                                # 0-0.5
 qingjiao = [0, 20, 40, 60, 80]                                  # 0-90
 jindidian = [0, 60, 120, 180, 240, 300]                         # 0-360
-#shengjiaodian = [0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330]  # 0-360
-shengjiaodian = [0, 60, 120, 180, 240, 300]
-xiangwei = [90, 180, 270]                    # 0-360
+shengjiaodian = [0, 60, 120, 180, 240, 300]                     # 0-360
+xiangwei = [90, 180, 270]                                       # 0-360
 totalTime = 27 * 24 * 60 * 60 + 7 * 60 * 60                     # 2358000
-txtCount = 0
+txtCount = 5
 
 # 采集最终数据
 #for a1 in banchangzhou:
 a1 = 6500
 for a2 in pianxinlv:
     for a3 in qingjiao:
-        print("========================", a2, a3)
-        txtCount = txtCount + 1
-        txtStr = "data" + str(txtCount) + ".txt"
-        myFo = open(txtStr, "w")
         for a4 in jindidian:
+            print("========================", a2, a3, a4)
+            if (a2==0) & (a3==0):
+                continue
+            if (a2==0) & (a3==20) & (a4<100):
+                continue
+            if (a4==0) | (a4==120) | (a4==240):
+                txtCount = txtCount + 1
+                txtStr = "data" + str(txtCount) + ".txt"
+                myFo = open(txtStr, "w")
             for a5 in shengjiaodian:
                 modify(keplerian1, a1, a2, a3, a4, a5, 0)
                 sat1.Propagator.QueryInterface(STKObjects.IAgVePropagatorJ4Perturbation).InitialState.Representation.Assign(keplerian1)
@@ -124,12 +128,13 @@ for a2 in pianxinlv:
                                     if chainResults3.DataSets.Count != 0:
                                         coverage3 = sum(chainResults3.DataSets.GetDataSetByName("Duration").GetValues()) / totalTime * 100
                                     else:
-                                        coverage3 = 0    
+                                        coverage3 = 0 
                                     myFo.write("%.2f %d %d %d %.2f %d %d %d %d %.3f %.3f %.3f\n" % (a2,a3,a4,a5,aa2,aa3,aa4,aa5,aa6,coverage1,coverage2,coverage3))
-        endTime = time.time()
-        print(endTime-startTime)
-        print("%.2f %d %d %d\t%.2f %d %d %d %d %.3f %.3f %.3f\t done" % (a2,a3,a4,a5,aa2,aa3,aa4,aa5,aa6,coverage1,coverage2,coverage3))
-        myFo.close()
+            if (a4==60) | (a4==180) | (a4==300):
+                endTime = time.time()
+                print((endTime-startTime)/60/60," hours passed")
+                print("%.2f %d %d %d\t\t%.2f %d %d %d %d\tdone" % (a2,a3,a4,a5,aa2,aa3,aa4,aa5,aa6))
+                myFo.close()
                 
 endTime = time.time()
-print("================ end of simulation ================/n", endTime-startTime)
+print("================ end of simulation ================/n", endTime-startTime/60/60, "hours passed")
