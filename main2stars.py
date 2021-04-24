@@ -79,7 +79,7 @@ jindidian = [0, 60, 120, 180, 240, 300]                         # 0-360
 shengjiaodian = [0, 60, 120, 180, 240, 300]                     # 0-360
 xiangwei = [90, 180, 270]                                       # 0-360
 totalTime = 27 * 24 * 60 * 60 + 7 * 60 * 60                     # 2358000
-txtCount = 5
+txtCount = 30
 
 # 采集最终数据
 #for a1 in banchangzhou:
@@ -88,10 +88,15 @@ for a2 in pianxinlv:
     for a3 in qingjiao:
         for a4 in jindidian:
             print("========================", a2, a3, a4)
-            if (a2==0) & (a3==0):
+            ###########
+            if (a2==0) | (a2==0.15):
                 continue
-            if (a2==0) & (a3==20) & (a4<100):
-                continue
+            # if (a2==0.15) & ((a3==0) | (a3==20) | (a3==40) | (a3==60)):
+            #     continue
+            # if (a2==0) & (a3==80) & (a4<120):
+            #     continue
+            # 0 20 180 跳过去了
+            ###########
             if (a4==0) | (a4==120) | (a4==240):
                 txtCount = txtCount + 1
                 txtStr = "data" + str(txtCount) + ".txt"
