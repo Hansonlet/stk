@@ -8,10 +8,10 @@ from tensorflow.keras import regularizers
 import random
 
 def import_data():
-    path = "./one_circle/"
+    path = "./two_circles/"
     files = os.listdir(path)
-    train = []
-    label = []
+    training_data = []
+    training_label = []
     num=0
     for file in files:
         file = path + file
@@ -29,23 +29,35 @@ def import_data():
             # line_data[6]=line_data[8]
             # line_data[7]=line_data[9]
 
-            line_data[6] = line_data[6]+line_data[7]+line_data[8]
-            train.append(line_data[1 : 6])
-            label.append(line_data[6])
-            # if(line_data[10]>210)&(line_data[10]<220):
-            #     myFo.write("%d %.1f %d %d %d %d %.1f %d %d %d\n" % (line_data[0], line_data[1],line_data[2],line_data[3],line_data[4],line_data[5],line_data[6],line_data[7],line_data[8],line_data[9]))
-            #     num1+=1
-            if(line_data[6]>230):
+            line_data[9] = line_data[9]+line_data[10]+line_data[11]
+            training_data.append(line_data[0 : 9])
+            training_label.append(line_data[9])
+            if(line_data[9]>200):
                  num+=1
         fo.close()
+
+    path_test = "./two_circles_test/"
+    files = os.listdir(path_test)
+    test_data = []
+    test_label = []
+    for file in files:
+        file = path_test + file
+        fo = open(file, "r")
+        for line in fo:
+            line_data = line.split(" ")
+            line_data[-1] = line_data[-1][0 : -1]
+            line_data = list(map(float, line_data))
+
+            line_data[9] = line_data[9]+line_data[10]+line_data[11]
+            test_data.append(line_data[0 : 9])
+            test_label.append(line_data[9])
+            if(line_data[9]>200):
+                 num+=1
+        fo.close()
+
     # np.random.shuffle(train)
     # np.random.shuffle(label)
-    print("better than 230: ", 100*num/len(train), "%\n")
-    train_amount = round(len(train)*0.5)
-    training_data = train[0 : train_amount]
-    training_label = label[0 : train_amount]
-    test_data = train[train_amount : len(train)]
-    test_label = label[train_amount : len(label)]
+    print("better than 200: ", 100*num/(len(training_data)+len(test_data)), "%\n")
     return training_data, training_label, test_data, test_label
 
 
@@ -77,7 +89,7 @@ print("================================")
 
 # nerual network
 model = Sequential()
-model.add(Dense(units=16, activation='relu', input_dim=5))#kernel_regularizer=regularizers.l2(0.1)
+model.add(Dense(units=16, activation='relu', input_dim=9))#kernel_regularizer=regularizers.l2(0.1)
 for i in range(3):
       model.add(Dense(units=64, activation='relu'))
 #     model.add(tf.keras.layers.Dropout(0.5))
@@ -85,7 +97,7 @@ model.add(Dense(units=8, activation='relu'))
 model.add(Dense(units=1, activation='linear'))
 model.compile(optimizer='adam', loss='mse', metrics=['mae']) 
 
-history = model.fit(training_data, training_label, epochs=100, batch_size=32, verbose=1)# 
+history = model.fit(training_data, training_label, epochs=100, batch_size=16, verbose=1)# 
 # validation_data=(test_data,test_label), validation_freq=1) 
 # print(model.summary())
 print("===================================================")
