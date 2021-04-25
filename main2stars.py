@@ -79,7 +79,7 @@ jindidian = [0, 60, 120, 180, 240, 300]                         # 0-360
 shengjiaodian = [0, 60, 120, 180, 240, 300]                     # 0-360
 xiangwei = [90, 180, 270]                                       # 0-360
 totalTime = 27 * 24 * 60 * 60 + 7 * 60 * 60                     # 2358000
-txtCount = 30
+txtCount = 36
 
 # 采集最终数据
 #for a1 in banchangzhou:
@@ -91,8 +91,8 @@ for a2 in pianxinlv:
             ###########
             if (a2==0) | (a2==0.15):
                 continue
-            # if (a2==0.15) & ((a3==0) | (a3==20) | (a3==40) | (a3==60)):
-            #     continue
+            if (a2==0.3) & ((a3==0) | (a3==20)):
+                continue
             # if (a2==0) & (a3==80) & (a4<120):
             #     continue
             # 0 20 180 跳过去了
