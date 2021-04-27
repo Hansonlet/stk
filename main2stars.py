@@ -73,73 +73,63 @@ keplerian2.LocationType = STKObjects.eLocationTrueAnomaly
 
 # 初始化参数
 banchangzhou = [6500]                                           # 3000-5000，可优化
-pianxinlv = [0, 0.15, 0.3, 0.45]                                # 0-0.5
-qingjiao = [0, 20, 40, 60, 80]                                  # 0-90
-jindidian = [0, 60, 120, 180, 240, 300]                         # 0-360
+pianxinlv = [0, 0.1, 0.2, 0.3, 0.4, 0.5]                        # 0-0.5
+qingjiao = []                                                   # 0-90
+jindidian = [90, 270]                                           # 0-360
 shengjiaodian = [0, 60, 120, 180, 240, 300]                     # 0-360
 xiangwei = [90, 180, 270]                                       # 0-360
 totalTime = 27 * 24 * 60 * 60 + 7 * 60 * 60                     # 2358000
-txtCount = 36
+txtCount = 0
 
 # 采集最终数据
-#for a1 in banchangzhou:
+# for a1 in banchangzhou:
 a1 = 6500
 for a2 in pianxinlv:
-    for a3 in qingjiao:
-        for a4 in jindidian:
-            print("========================", a2, a3, a4)
-            ###########
-            if (a2==0) | (a2==0.15):
-                continue
-            if (a2==0.3) & ((a3==0) | (a3==20)):
-                continue
-            # if (a2==0) & (a3==80) & (a4<120):
-            #     continue
-            # 0 20 180 跳过去了
-            ###########
-            if (a4==0) | (a4==120) | (a4==240):
-                txtCount = txtCount + 1
-                txtStr = "data" + str(txtCount) + ".txt"
-                myFo = open(txtStr, "w")
-            for a5 in shengjiaodian:
-                modify(keplerian1, a1, a2, a3, a4, a5, 0)
-                sat1.Propagator.QueryInterface(STKObjects.IAgVePropagatorJ4Perturbation).InitialState.Representation.Assign(keplerian1)
-                sat1.Propagator.QueryInterface(STKObjects.IAgVePropagatorJ4Perturbation).Propagate()
-                for aa2 in pianxinlv:
-                    for aa3 in qingjiao:
-                        for aa4 in jindidian:
-                            for aa5 in shengjiaodian:
-                                for aa6 in xiangwei:
-                                    modify(keplerian2, a1, aa2, aa3, aa4, aa5, aa6)
-                                    sat2.Propagator.QueryInterface(STKObjects.IAgVePropagatorJ4Perturbation).InitialState.Representation.Assign(keplerian2)
-                                    sat2.Propagator.QueryInterface(STKObjects.IAgVePropagatorJ4Perturbation).Propagate()
+    print("========================", a2)
+    txtCount = txtCount + 1
+    txtStr = "data" + str(txtCount) + ".txt"
+    myFo = open(txtStr, "w")
+    a3=np.arccos(np.sqrt(3/5*(1-a2*a2)))/3.1415926*180
+    for a4 in jindidian:        
+        for a5 in shengjiaodian:
+            modify(keplerian1, a1, a2, a3, a4, a5, 0)
+            sat1.Propagator.QueryInterface(STKObjects.IAgVePropagatorJ4Perturbation).InitialState.Representation.Assign(keplerian1)
+            sat1.Propagator.QueryInterface(STKObjects.IAgVePropagatorJ4Perturbation).Propagate()
+            for aa2 in pianxinlv:
+                aa3=np.arccos(np.sqrt(3/5*(1-aa2*aa2)))/3.1415926*180
+                for aa4 in jindidian:
+                    for aa5 in shengjiaodian:
+                        for aa6 in xiangwei:
+                            modify(keplerian2, a1, aa2, aa3, aa4, aa5, aa6)
+                            sat2.Propagator.QueryInterface(STKObjects.IAgVePropagatorJ4Perturbation).InitialState.Representation.Assign(keplerian2)
+                            sat2.Propagator.QueryInterface(STKObjects.IAgVePropagatorJ4Perturbation).Propagate()
                                         
-                                    # calculate
-                                    chain1.ComputeAccess()
-                                    chain2.ComputeAccess()
-                                    chain3.ComputeAccess()
+                            # calculate
+                            chain1.ComputeAccess()
+                            chain2.ComputeAccess()
+                            chain3.ComputeAccess()
 
-                                    chainResults1 = chainTemp1.DataProviders.GetDataPrvIntervalFromPath("Complete Access").Exec(sc2.StartTime, sc2.StopTime)
-                                    chainResults2 = chainTemp2.DataProviders.GetDataPrvIntervalFromPath("Complete Access").Exec(sc2.StartTime, sc2.StopTime)
-                                    chainResults3 = chainTemp3.DataProviders.GetDataPrvIntervalFromPath("Complete Access").Exec(sc2.StartTime, sc2.StopTime)
-                                    if chainResults1.DataSets.Count != 0:
-                                        coverage1 = sum(chainResults1.DataSets.GetDataSetByName("Duration").GetValues()) / totalTime * 100
-                                    else:
-                                        coverage1 = 0
-                                    if chainResults2.DataSets.Count != 0:
-                                        coverage2 = sum(chainResults2.DataSets.GetDataSetByName("Duration").GetValues()) / totalTime * 100
-                                    else:
-                                        coverage2 = 0
-                                    if chainResults3.DataSets.Count != 0:
-                                        coverage3 = sum(chainResults3.DataSets.GetDataSetByName("Duration").GetValues()) / totalTime * 100
-                                    else:
-                                        coverage3 = 0 
-                                    myFo.write("%.2f %d %d %d %.2f %d %d %d %d %.3f %.3f %.3f\n" % (a2,a3,a4,a5,aa2,aa3,aa4,aa5,aa6,coverage1,coverage2,coverage3))
-            if (a4==60) | (a4==180) | (a4==300):
-                endTime = time.time()
-                print((endTime-startTime)/60/60," hours passed")
-                print("%.2f %d %d %d\t\t%.2f %d %d %d %d\tdone" % (a2,a3,a4,a5,aa2,aa3,aa4,aa5,aa6))
-                myFo.close()
+                            chainResults1 = chainTemp1.DataProviders.GetDataPrvIntervalFromPath("Complete Access").Exec(sc2.StartTime, sc2.StopTime)
+                            chainResults2 = chainTemp2.DataProviders.GetDataPrvIntervalFromPath("Complete Access").Exec(sc2.StartTime, sc2.StopTime)
+                            chainResults3 = chainTemp3.DataProviders.GetDataPrvIntervalFromPath("Complete Access").Exec(sc2.StartTime, sc2.StopTime)
+                            if chainResults1.DataSets.Count != 0:
+                                coverage1 = sum(chainResults1.DataSets.GetDataSetByName("Duration").GetValues()) / totalTime * 100
+                            else:
+                                coverage1 = 0
+                            if chainResults2.DataSets.Count != 0:
+                                coverage2 = sum(chainResults2.DataSets.GetDataSetByName("Duration").GetValues()) / totalTime * 100
+                            else:
+                                coverage2 = 0
+                            if chainResults3.DataSets.Count != 0:
+                                coverage3 = sum(chainResults3.DataSets.GetDataSetByName("Duration").GetValues()) / totalTime * 100
+                            else:
+                                coverage3 = 0 
+                            myFo.write("%.2f %d %d %d %.2f %d %d %d %d %.3f %.3f %.3f\n" % (a2,a3,a4,a5,aa2,aa3,aa4,aa5,aa6,coverage1,coverage2,coverage3))
+
+    endTime = time.time()
+    print((endTime-startTime)/60/60," hours passed")
+    print("%.2f %d %d %d\t\t%.2f %d %d %d %d\tdone" % (a2,a3,a4,a5,aa2,aa3,aa4,aa5,aa6))
+    myFo.close()
                 
 endTime = time.time()
 print("================ end of simulation ================/n", endTime-startTime/60/60, "hours passed")
