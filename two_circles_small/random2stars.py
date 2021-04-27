@@ -5,6 +5,7 @@ from comtypes.gen import STKObjects
 from comtypes.client import GetActiveObject
 import time
 import _thread
+import random
 
 def modify(keplerian, a1, a2, a3, a4, a5, a6):
     # 半长轴长度
@@ -73,36 +74,32 @@ keplerian2.LocationType = STKObjects.eLocationTrueAnomaly
 
 # 初始化参数
 banchangzhou = [6500]                                           # 3000-5000，可优化
-pianxinlv = [0, 0.15, 0.3, 0.45]                                # 0-0.5
-qingjiao = [0, 20, 40, 60, 80]                                  # 0-90
-jindidian = [0, 60, 120, 180, 240, 300]                         # 0-360
-shengjiaodian = [0, 60, 120, 180, 240, 300]                     # 0-360
-xiangwei = [90, 180, 270]                                       # 0-360
+pianxinlv = [0, 0.15, 0.3]                                     # 0-0.4
+qingjiao = [0, 25, 50, 75]                                         # 0-90
+jindidian = [0, 90, 180, 270]                             # 0-360
+shengjiaodian = [0, 90, 180, 270]                         # 0-360
+xiangwei = [45, 135, 215]                                       # 0-360
 totalTime = 27 * 24 * 60 * 60 + 7 * 60 * 60                     # 2358000
-txtCount = 36
+txtCount = 100
 
 # 采集最终数据
 #for a1 in banchangzhou:
 a1 = 6500
 for a2 in pianxinlv:
     for a3 in qingjiao:
+        print("========================", a2, a3)
+        txtCount = txtCount + 1
+        txtStr = "data" + str(txtCount) + ".txt"
+        myFo = open(txtStr, "w")
         for a4 in jindidian:
-            print("========================", a2, a3, a4)
-            ###########
-            if (a2==0) | (a2==0.15):
-                continue
-            if (a2==0.3) & ((a3==0) | (a3==20)):
-                continue
-            # if (a2==0) & (a3==80) & (a4<120):
-            #     continue
-            # 0 20 180 跳过去了
-            ###########
-            if (a4==0) | (a4==120) | (a4==240):
-                txtCount = txtCount + 1
-                txtStr = "data" + str(txtCount) + ".txt"
-                myFo = open(txtStr, "w")
             for a5 in shengjiaodian:
-                modify(keplerian1, a1, a2, a3, a4, a5, 0)
+                b1=a1
+                b2=a2+random.random()/10
+                b3=a3+random.random()*15
+                b4=a4+random.random()*90
+                b5=a5+random.random()*90
+                b6=0
+                modify(keplerian1, b1,b2,b3,b4,b5,b6)
                 sat1.Propagator.QueryInterface(STKObjects.IAgVePropagatorJ4Perturbation).InitialState.Representation.Assign(keplerian1)
                 sat1.Propagator.QueryInterface(STKObjects.IAgVePropagatorJ4Perturbation).Propagate()
                 for aa2 in pianxinlv:
@@ -110,7 +107,13 @@ for a2 in pianxinlv:
                         for aa4 in jindidian:
                             for aa5 in shengjiaodian:
                                 for aa6 in xiangwei:
-                                    modify(keplerian2, a1, aa2, aa3, aa4, aa5, aa6)
+                                    bb1=a1
+                                    bb2=aa2+random.random()/10
+                                    bb3=aa3+random.random()*15
+                                    bb4=aa4+random.random()*90
+                                    bb5=aa5+random.random()*90
+                                    bb6=aa6+random.random()*90
+                                    modify(keplerian2, bb1,bb2,bb3,bb4,bb5,bb6)
                                     sat2.Propagator.QueryInterface(STKObjects.IAgVePropagatorJ4Perturbation).InitialState.Representation.Assign(keplerian2)
                                     sat2.Propagator.QueryInterface(STKObjects.IAgVePropagatorJ4Perturbation).Propagate()
                                         
@@ -134,12 +137,12 @@ for a2 in pianxinlv:
                                         coverage3 = sum(chainResults3.DataSets.GetDataSetByName("Duration").GetValues()) / totalTime * 100
                                     else:
                                         coverage3 = 0 
-                                    myFo.write("%.2f %d %d %d %.2f %d %d %d %d %.3f %.3f %.3f\n" % (a2,a3,a4,a5,aa2,aa3,aa4,aa5,aa6,coverage1,coverage2,coverage3))
-            if (a4==60) | (a4==180) | (a4==300):
-                endTime = time.time()
-                print((endTime-startTime)/60/60," hours passed")
-                print("%.2f %d %d %d\t\t%.2f %d %d %d %d\tdone" % (a2,a3,a4,a5,aa2,aa3,aa4,aa5,aa6))
-                myFo.close()
+                                    myFo.write("%.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.3f %.3f %.3f\n" % (b2,b3,b4,b5,bb2,bb3,bb4,bb5,bb6,coverage1,coverage2,coverage3))
+
+        endTime = time.time()
+        print((endTime-startTime)/60/60," hours passed")
+        print("%.2f %.2f %.2f %.2f\t\t%.2f %.2f %.2f %.2f %.2f\tdone" % (b2,b3,b4,b5,bb2,bb3,bb4,bb5,bb6))
+        myFo.close()
                 
 endTime = time.time()
 print("================ end of simulation ================/n", endTime-startTime/60/60, "hours passed")
