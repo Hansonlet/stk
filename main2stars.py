@@ -3,6 +3,7 @@ import comtypes
 from comtypes.gen import STKUtil
 from comtypes.gen import STKObjects
 from comtypes.client import GetActiveObject
+import numpy as np
 import time
 import _thread
 
@@ -124,11 +125,11 @@ for a2 in pianxinlv:
                                 coverage3 = sum(chainResults3.DataSets.GetDataSetByName("Duration").GetValues()) / totalTime * 100
                             else:
                                 coverage3 = 0 
-                            myFo.write("%.2f %d %d %d %.2f %d %d %d %d %.3f %.3f %.3f\n" % (a2,a3,a4,a5,aa2,aa3,aa4,aa5,aa6,coverage1,coverage2,coverage3))
+                            myFo.write("%.2f %.2f %d %d %.2f %.2f %d %d %d %.3f %.3f %.3f\n" % (a2,a3,a4,a5,aa2,aa3,aa4,aa5,aa6,coverage1,coverage2,coverage3))
 
     endTime = time.time()
     print((endTime-startTime)/60/60," hours passed")
-    print("%.2f %d %d %d\t\t%.2f %d %d %d %d\tdone" % (a2,a3,a4,a5,aa2,aa3,aa4,aa5,aa6))
+    print("%.2f %.2f %d %d\t\t%.2f %.2f %d %d %d\tdone" % (a2,a3,a4,a5,aa2,aa3,aa4,aa5,aa6))
     myFo.close()
                 
 endTime = time.time()
