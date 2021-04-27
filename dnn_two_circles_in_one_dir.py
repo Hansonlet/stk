@@ -6,14 +6,12 @@ from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense
 from tensorflow.keras import regularizers
 import random
-from tensorflow.keras.layers import BatchNormalization
 
 def import_data():
     path = "./two_circles/"
     files = os.listdir(path)
-    training_data = []
-    training_label = []
-    data=[]
+    train = []
+    label = []
     num=0
     for file in files:
         file = path + file
@@ -24,37 +22,19 @@ def import_data():
             line_data = list(map(float, line_data))
 
             line_data[9] = line_data[9]+line_data[10]+line_data[11]
-            data.append(line_data[0:10])
-            training_data.append(line_data[0 : 9])
-            training_label.append(line_data[9])
+            train.append(line_data[0 : 9])
+            label.append(line_data[9])
             if(line_data[9]>230):
                  num+=1
         fo.close()
-
-    path_test = "./two_circles_test/"
-    files = os.listdir(path_test)
-    test_data = []
-    test_label = []
-    for file in files:
-        file = path_test + file
-        fo = open(file, "r")
-        for line in fo:
-            line_data = line.split(" ")
-            line_data[-1] = line_data[-1][0 : -1]
-            line_data = list(map(float, line_data))
-
-            line_data[9] = line_data[9]+line_data[10]+line_data[11]
-            test_data.append(line_data[0 : 9])
-            test_label.append(line_data[9])
-            if(line_data[9]>230):
-                 num+=1
-        fo.close()
-
-    np.random.shuffle(data)
-    data=np.array(data)
-    training_data=data[:,0:9]
-    training_label=data[:,9]
-    print("better than 230: ", 100*num/(len(training_data)+len(test_data)), "%\n")
+    # np.random.shuffle(train)
+    # np.random.shuffle(label)
+    print("better than 230: ", 100*num/len(train), "%\n")
+    train_amount = round(len(train)*0.777)
+    training_data = train[0 : train_amount]
+    training_label = label[0 : train_amount]
+    test_data = train[train_amount : len(train)]
+    test_label = label[train_amount : len(label)]
     return training_data, training_label, test_data, test_label
 
 
@@ -79,10 +59,8 @@ print("load ", len(training_label), " training label")
 print("load ", len(test_data), " test data")
 print("load ", len(test_label), " test label")
 print("================================")
-print("data0: ", training_data[0])
-print("label0: ", training_label[0])
-print("data1: ", training_data[1])
-print("label1: ", training_label[1])
+print("data: ", training_data[0])
+print("label: ", training_label[0])
 print("================================")
 
 
@@ -90,12 +68,13 @@ print("================================")
 model = Sequential()
 model.add(Dense(units=16, activation='relu', input_dim=9))#kernel_regularizer=regularizers.l2(0.1)
 for i in range(3):
-    model.add(Dense(units=64, activation='relu'))
+      model.add(Dense(units=64, activation='relu'))
+    #   model.add(tf.keras.layers.Dropout(0.5))
 model.add(Dense(units=8, activation='relu'))
 model.add(Dense(units=1, activation='linear'))
 model.compile(optimizer='adam', loss='mse', metrics=['mae']) 
 
-history = model.fit(training_data, training_label, epochs=200, batch_size=128, verbose=1)# 
+history = model.fit(training_data, training_label, epochs=80, batch_size=128, verbose=1)# 
 # validation_data=(test_data,test_label), validation_freq=1) 
 # print(model.summary())
 print("===================================================")
@@ -104,12 +83,12 @@ print(model.predict(test_data))
 loss_and_metrics = model.evaluate(test_data, test_label, batch_size=32)
 fore_data = model.predict(test_data, batch_size=32)  # 通过predict函数输出网络的预测值
 
-fig1=plt.figure(1)
+fig1=plt.figure(1) # 图像1显示测试数据的房价和网络利用测试数据得到的预测房价
 plt.plot(test_label, label='real data')
 plt.plot(fore_data, label='forecasting data')
 plt.xlabel('epochs')
-plt.ylabel('housing price')
-plt.title('predict housing price')
+plt.ylabel('coverage rate')
+plt.title('predicted data')
 plt.legend()
 fig1.savefig('f1.png')
 
