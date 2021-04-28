@@ -6,6 +6,7 @@ from comtypes.client import GetActiveObject
 import time
 import _thread
 import random
+import numpy as np
 
 def modify(keplerian, a1, a2, a3, a4, a5, a6):
     # 半长轴长度
@@ -134,7 +135,7 @@ for i in range(100000):
         coverage3 = 0 
     myFo.write("%.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.3f %.3f %.3f\n" % (a2,a3,a4,a5,aa2,aa3,aa4,aa5,aa6,coverage1,coverage2,coverage3))
 
-    if mod(i,5000) == 0:
+    if i%5000 == 0:
         print("======================================== ", i)
         endTime = time.time()
         print((endTime-startTime)/60/60," hours passed\n")
