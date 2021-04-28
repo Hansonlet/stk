@@ -89,7 +89,7 @@ print("================================")
 # nerual network
 model = Sequential()
 model.add(Dense(units=16, activation='relu', input_dim=9))#kernel_regularizer=regularizers.l2(0.1)
-for i in range(3):
+for i in range(5):
     model.add(Dense(units=64, activation='relu'))
 model.add(Dense(units=8, activation='relu'))
 model.add(Dense(units=1, activation='linear'))
