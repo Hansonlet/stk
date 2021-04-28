@@ -75,10 +75,10 @@ keplerian2.LocationType = STKObjects.eLocationTrueAnomaly
 # 初始化参数
 banchangzhou = [6500]                                           # 3000-5000，可优化
 pianxinlv = [0, 0.1, 0.2, 0.3, 0.4, 0.5]                        # 0-0.5
-qingjiao = []                                                   # 0-90
+qingjiao = [0, 40, 50]                                          # 0-90, 可优化
 jindidian = [90, 270]                                           # 0-360
 shengjiaodian = [0, 60, 120, 180, 240, 300]                     # 0-360
-xiangwei = [90, 180, 270]                                       # 0-360
+xiangwei = [60, 120, 180, 240, 300]                             # 0-360
 totalTime = 27 * 24 * 60 * 60 + 7 * 60 * 60                     # 2358000
 txtCount = 0
 
