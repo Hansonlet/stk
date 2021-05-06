@@ -7,14 +7,15 @@ from comtypes.gen import STKUtil
 from comtypes.gen import STKObjects
 from comtypes.client import GetActiveObject
 import cProfile, pstats, io
+import math
 
 # 火焰图
 pr = cProfile.Profile()
 pr.enable()
 
 # gobal parms
-item_size = 100
-gen = 50
+item_size = 200
+gen = 100
 totalTime = 27 * 24 * 60 * 60 + 7 * 60 * 60                 # 2358000
 startTime = time.time()
 
@@ -77,7 +78,7 @@ def modify(keplerian, a1, a2, a3, a4, a5, a6):
     # 半长轴长度
     keplerian.SizeShape.QueryInterface(STKObjects.IAgClassicalSizeShapeSemimajorAxis).SemiMajorAxis = a1
     # 偏心率
-    keplerian.SizeShape.QueryInterface(STKObjects.IAgClassicalSizeShapeSemimajorAxis).Eccentricity = a2
+    keplerian.SizeShape.QueryInterface(STKObjects.IAgClassicalSizeShapeSemimajorAxis).Eccentricity = np.sqrt((1-5/3*np.cos(a3/180*np.pi)*np.cos(a3/180*np.pi)))
     # degrees 倾角
     keplerian.Orientation.Inclination = a3
     # degrees 近地点
