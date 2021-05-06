@@ -110,12 +110,12 @@ def cal(group, scores):
             STKObjects.IAgVePropagatorJ4Perturbation).InitialState.Representation.Assign(keplerian1)
         sat1.Propagator.QueryInterface(
             STKObjects.IAgVePropagatorJ4Perturbation).Propagate()
-        modify(keplerian2, 6500, 0, group[i][3], group[i][4], group[i][5], group[i][6])
+        modify(keplerian2, 6500, 0, group[i][0], group[i][1], group[i][2], group[i][3])
         sat2.Propagator.QueryInterface(
             STKObjects.IAgVePropagatorJ4Perturbation).InitialState.Representation.Assign(keplerian2)
         sat2.Propagator.QueryInterface(
             STKObjects.IAgVePropagatorJ4Perturbation).Propagate()
-        modify(keplerian3, 6500, 0, group[i][7], group[i][8], group[i][9], group[i][10])
+        modify(keplerian3, 6500, 0, group[i][0], group[i][1], group[i][2], group[i][4])
         sat3.Propagator.QueryInterface(
             STKObjects.IAgVePropagatorJ4Perturbation).InitialState.Representation.Assign(keplerian3)
         sat3.Propagator.QueryInterface(
@@ -158,12 +158,12 @@ def cal_once(group):
         STKObjects.IAgVePropagatorJ4Perturbation).InitialState.Representation.Assign(keplerian1)
     sat1.Propagator.QueryInterface(
         STKObjects.IAgVePropagatorJ4Perturbation).Propagate()
-    modify(keplerian2, 6500, 0, group[3], group[4], group[5], group[6])
+    modify(keplerian2, 6500, 0, group[0], group[1], group[2], group[3])
     sat2.Propagator.QueryInterface(
         STKObjects.IAgVePropagatorJ4Perturbation).InitialState.Representation.Assign(keplerian2)
     sat2.Propagator.QueryInterface(
         STKObjects.IAgVePropagatorJ4Perturbation).Propagate()
-    modify(keplerian3, 6500, 0, group[7], group[8], group[9], group[10])
+    modify(keplerian3, 6500, 0, group[0], group[1], group[2], group[4])
     sat3.Propagator.QueryInterface(
         STKObjects.IAgVePropagatorJ4Perturbation).InitialState.Representation.Assign(keplerian3)
     sat3.Propagator.QueryInterface(
@@ -202,35 +202,23 @@ def cal_once(group):
 
 def init():
     print("---------------- begin GA init ----------------")
-    group = [[0 for col in range(11)] for row in range(item_size)]
+    group = [[0 for col in range(5)] for row in range(item_size)]
     for i in range(item_size):
         while 1:
             # 半长轴 6500
             # 偏心率 0 ~ 0.61240
             # 倾角,39.24~52.24
             group[i][0] = random.random()*13+39.24
-            group[i][3] = random.random()*13+39.24
-            group[i][7] = random.random()*13+39.24
             # 近地点,0-180
             if random>0.5:
                 group[i][1] = 90
             else:
                 group[i][1] = 270
-            if random>0.5:
-                group[i][4] = 90
-            else:
-                group[i][4] = 270
-            if random>0.5:
-                group[i][8] = 90
-            else:
-                group[i][8] = 270
             # 升交点,0-360
             group[i][2] = random.random()*360
-            group[i][5] = random.random()*360
-            group[i][9] = random.random()*360
             # 相位，0-360
-            group[i][6] = random.random()*360
-            group[i][10] = random.random()*360
+            group[i][3] = random.random()*360
+            group[i][4] = random.random()*360
             break
 
     # group = import_init_data()
@@ -243,7 +231,7 @@ def init():
 
 
 def choose(group, scores):
-    new_group = [[0 for col in range(11)] for row in range(item_size)]
+    new_group = [[0 for col in range(5)] for row in range(item_size)]
     p_choose = [0 for col in range(item_size)]
     sum_score = sum(scores)
     accumulate = 0
@@ -272,8 +260,8 @@ def cross(group):
     for i in range(times):
         num_a = random.randint(0, item_size-2)
         num_b = random.randint(0, item_size-2)
-        temp_pos1 = random.randint(0, 10)
-        temp_pos2 = random.randint(0, 10)
+        temp_pos1 = random.randint(0, 4)
+        temp_pos2 = random.randint(0, 4)
         pos1 = min(temp_pos1, temp_pos2)
         pos2 = max(temp_pos1, temp_pos2)
 
@@ -287,17 +275,17 @@ def variation(group):
     times = int(item_size * variation_rate)
     for i in range(times):
         num = random.randint(0, item_size-2)
-        pos = random.randint(0, 10)
-        if (pos == 0 | pos == 3 | pos == 7 ):
+        pos = random.randint(0, 4)
+        if (pos == 0):
             group[num][pos] = random.random()*13+39.24
-        elif (pos == 1 | pos == 4 | pos == 8):
+        elif (pos == 1):
             if random.random()>0.5:
                 group[num][pos] = 90
             else:
                 group[num][pos] = 270
-        elif (pos == 2 | pos == 5 | pos == 9):
+        elif (pos == 2):
             group[num][pos] = random.random()*360
-        elif (pos == 6 | pos == 10):
+        elif (pos == 3 | pos == 4):
             group[num][pos] = random.random()*360
     return group
 
@@ -306,7 +294,7 @@ def main_ga():
     [group, scores] = init()
     best_scores = [0 for col in range(gen+1)]
     ave_scores = [0 for col in range(gen+1)]
-    best_items = [[0 for col in range(11)] for row in range(gen+1)]
+    best_items = [[0 for col in range(5)] for row in range(gen+1)]
     best_scores[0] = max(scores)
     ave_scores[0] = np.mean(scores)
     best_items[0][:] = group[scores.index(max(scores))][:]
