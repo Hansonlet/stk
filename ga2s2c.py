@@ -186,10 +186,10 @@ def init():
             group[i][0] = 6500
             # group[i][5] = 6500
             # 偏心率,0-0.4
-            group[i][1] = random.random()/2.5
+            # group[i][1] = random.random()/2.5
             # group[i][6] = random.random()/2.5
-            # 倾角,0-90
-            group[i][2] = random.random()*90
+            # 倾角,39.24~
+            group[i][2] = random.random()*90+39.24
             # group[i][7] = random.random()*90
             # 近地点,0-180
             group[i][3] = random.random()*360
