@@ -88,8 +88,8 @@ txtStr = "data" + str(txtCount) + ".txt"
 myFo = open(txtStr, "w")
 for i in range(100000):
     a1 = 6500
-    a2=random.random()/2
-    a3=np.arccos(np.sqrt(3/5*(1-a2*a2)))/3.1415926*180
+    a3 = random.random()*12.9+39.24
+    a2 = np.sqrt((1-5/3*np.cos(a3/180*np.pi)*np.cos(a3/180*np.pi)))
     if(random.random()>0.5):
         a4=90
     else:
@@ -101,8 +101,8 @@ for i in range(100000):
     sat1.Propagator.QueryInterface(STKObjects.IAgVePropagatorJ4Perturbation).Propagate()
 
     aa1 = 6500
-    aa2=random.random()/2
-    aa3=np.arccos(np.sqrt(3/5*(1-aa2*aa2)))/3.1415926*180
+    aa3 = random.random()*12.9+39.24
+    aa2 = np.sqrt((1-5/3*np.cos(a3/180*np.pi)*np.cos(a3/180*np.pi)))
     if(random.random()>0.5):
         aa4=90
     else:
