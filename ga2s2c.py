@@ -13,10 +13,10 @@ pr = cProfile.Profile()
 pr.enable()
 
 # gobal parms
-item_size = 100
-gen = 30
+item_size = 200
+gen = 100
 cross_rate = 0.3
-variation_rate = 0.3
+variation_rate = 0.4
 totalTime = 27 * 24 * 60 * 60 + 7 * 60 * 60                 # 2358000
 startTime = time.time()
 
@@ -184,16 +184,16 @@ def init():
     for i in range(item_size):
         while 1:
             # 半长轴 6500
-            # 偏心率 0 ~ 0.61240
-            # 倾角,39.24~52.24
-            group[i][0] = random.random()*13+39.24
-            group[i][3] = random.random()*13+39.24
+            # 偏心率 0 ~ 0.61
+            # 倾角,39.24~52.14
+            group[i][0] = random.random()*12.9+39.24
+            group[i][3] = random.random()*12.9+39.24
             # 近地点,0-180
-            if random>0.5:
+            if random.random()>0.5:
                 group[i][1] = 90
             else:
                 group[i][1] = 270
-            if random>0.5:
+            if random.random()>0.5:
                 group[i][4] = 90
             else:
                 group[i][4] = 270
@@ -262,7 +262,7 @@ def variation(group):
         if (pos == 0 | pos == 3):
             group[num][pos] = random.random()*13+39.24
         elif (pos == 1 | pos == 4):
-            if random>0.5:
+            if random.random()>0.5:
                 group[num][pos] = 90
             else:
                 group[num][pos] = 270
@@ -346,7 +346,23 @@ print("ave: ", ave_scores)
 print("items: ", best_items)
 plt.show()
 
+txtStr = "ga2s2c.txt"
+myFo = open(txtStr, "w")
 
+myFo.wirte("time_cost\n")
+myFo.write(str(endTime - startTime))
+myFo.write("\n")
+
+myFo.wirte("best_score\n")
+myFo.write(str(best_scores))
+myFo.write("\n")
+
+myFo.wirte("ave_score\n")
+myFo.write(str(ave_scores))
+myFo.write("\n")
+
+myFo.wirte("best_item\n")
+myFo.write(str(best_item))
 
 # 火焰图执行步骤
 # python -m cProfile -s cumtime ga.py

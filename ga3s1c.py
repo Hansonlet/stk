@@ -14,7 +14,7 @@ pr.enable()
 
 # gobal parms
 item_size = 100
-gen = 30
+gen = 100
 cross_rate = 0.3
 variation_rate = 0.4
 totalTime = 27 * 24 * 60 * 60 + 7 * 60 * 60                 # 2358000
@@ -206,9 +206,9 @@ def init():
     for i in range(item_size):
         while 1:
             # 半长轴 6500
-            # 偏心率 0 ~ 0.61240
-            # 倾角,39.24~52.24
-            group[i][0] = random.random()*13+39.24
+            # 偏心率 0 ~ 0.61
+            # 倾角,39.24~52.14
+            group[i][0] = random.random()*12.9+39.24
             # 近地点,0-180
             if random>0.5:
                 group[i][1] = 90
@@ -363,7 +363,23 @@ print("ave: ", ave_scores)
 print("items: ", best_items)
 plt.show()
 
+txtStr = "ga3s1c.txt"
+myFo = open(txtStr, "w")
 
+myFo.wirte("time_cost\n")
+myFo.write(str(endTime - startTime))
+myFo.write("\n")
+
+myFo.wirte("best_score\n")
+myFo.write(str(best_scores))
+myFo.write("\n")
+
+myFo.wirte("ave_score\n")
+myFo.write(str(ave_scores))
+myFo.write("\n")
+
+myFo.wirte("best_item\n")
+myFo.write(str(best_item))
 
 # 火焰图执行步骤
 # python -m cProfile -s cumtime ga.py
