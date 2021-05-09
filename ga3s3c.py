@@ -334,14 +334,14 @@ def main_ga():
 
     endTime = time.time()
     print("time: ", endTime - startTime)
-    return [best_scores, ave_scores, best_items]
+    return [best_scores, ave_scores, best_items, endTime]
 
     
 
     
 
 
-[best_scores, ave_scores, best_items] = main_ga()
+[best_scores, ave_scores, best_items, endTime] = main_ga()
 
 # 火焰图
 pr.disable()
@@ -378,7 +378,7 @@ plt.show()
 txtStr = "ga3s3c.txt"
 myFo = open(txtStr, "w")
 
-myFo.wirte("time_cost\n")
+myFo.write("time_cost\n")
 myFo.write(str(endTime - startTime))
 myFo.write("\n")
 
