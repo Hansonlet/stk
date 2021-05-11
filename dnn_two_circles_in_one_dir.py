@@ -8,7 +8,7 @@ from tensorflow.keras import regularizers
 import random
 
 def import_data():
-    path = "./two_circles/"
+    path = "./2s2c/"
     files = os.listdir(path)
     train = []
     label = []
@@ -30,7 +30,7 @@ def import_data():
     # np.random.shuffle(train)
     # np.random.shuffle(label)
     print("better than 230: ", 100*num/len(train), "%\n")
-    train_amount = round(len(train)*0.777)
+    train_amount = round(len(train)*0.8)
     training_data = train[0 : train_amount]
     training_label = label[0 : train_amount]
     test_data = train[train_amount : len(train)]
