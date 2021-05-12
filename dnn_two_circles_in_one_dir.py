@@ -30,7 +30,7 @@ def import_data():
     # np.random.shuffle(train)
     # np.random.shuffle(label)
     print("better than 230: ", 100*num/len(train), "%\n")
-    train_amount = round(len(train)*0.8)
+    train_amount = round(len(train)*0.5)
     training_data = train[0 : train_amount]
     training_label = label[0 : train_amount]
     test_data = train[train_amount : len(train)]
@@ -66,15 +66,15 @@ print("================================")
 
 # nerual network
 model = Sequential()
-model.add(Dense(units=16, activation='relu', input_dim=9))#kernel_regularizer=regularizers.l2(0.1)
-for i in range(3):
-      model.add(Dense(units=64, activation='relu'))
+model.add(Dense(units=256, activation='relu', input_dim=9))#kernel_regularizer=regularizers.l2(0.1)
+for i in range(2):
+      model.add(Dense(units=256, activation='relu'))
     #   model.add(tf.keras.layers.Dropout(0.5))
-model.add(Dense(units=8, activation='relu'))
+#  model.add(Dense(units=8, activation='relu'))
 model.add(Dense(units=1, activation='linear'))
-model.compile(optimizer='adam', loss='mse', metrics=['mae']) 
+model.compile(optimizer='adam', loss='mse', metrics=['mape','mae']) 
 
-history = model.fit(training_data, training_label, epochs=80, batch_size=128, verbose=1)# 
+history = model.fit(training_data, training_label, epochs=200,  batch_size=64, verbose=1)# 
 # validation_data=(test_data,test_label), validation_freq=1) 
 # print(model.summary())
 print("===================================================")
