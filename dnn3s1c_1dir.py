@@ -82,7 +82,14 @@ print(model.predict(test_data))
 loss_and_metrics = model.evaluate(test_data, test_label, batch_size=32)
 fore_data = model.predict(test_data, batch_size=32)  # 通过predict函数输出网络的预测值
 
-# plot
+# record
+myFo = open("3s1c_dnn_record", "w")
+myFo.write("loss_and_metrics\n")
+myFo.write(str(loss_and_metrics))
+myFo.write("\nhistory mspe\n")
+myFo.write(str(history.history['mean_absolute_percentage_error']))
+myFo.close()
+
 fig1=plt.figure(1)
 plt.plot(history.history['mean_absolute_percentage_error'])
 plt.xlabel('迭代次数')

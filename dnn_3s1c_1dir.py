@@ -8,7 +8,7 @@ from tensorflow.keras import regularizers
 import random
 
 def import_data():
-    path = "./2s2c/"
+    path = "./forzen_data_3s1c/"
     files = os.listdir(path)
     train = []
     label = []
@@ -21,15 +21,15 @@ def import_data():
             line_data[-1] = line_data[-1][0 : -1]
             line_data = list(map(float, line_data))
 
-            line_data[9] = line_data[9]+line_data[10]+line_data[11]
-            train.append(line_data[0 : 9])
-            label.append(line_data[9])
-            if(line_data[9]>230):
+            line_data[6] = line_data[6]+line_data[7]+line_data[8]
+            train.append(line_data[0 : 6])
+            label.append(line_data[6])
+            if(line_data[6]>270):
                  num+=1
         fo.close()
     # np.random.shuffle(train)
     # np.random.shuffle(label)
-    print("better than 230: ", 100*num/len(train), "%\n")
+    print("better than 270: ", 100*num/len(train), "%\n")
     train_amount = round(len(train)*0.5)
     training_data = train[0 : train_amount]
     training_label = label[0 : train_amount]
@@ -66,11 +66,10 @@ print("================================")
 
 # nerual network
 model = Sequential()
-model.add(Dense(units=256, activation='relu', input_dim=9))#kernel_regularizer=regularizers.l2(0.1)
+model.add(Dense(units=256, activation='relu', input_dim=6))#kernel_regularizer=regularizers.l2(0.1)
 for i in range(2):
       model.add(Dense(units=256, activation='relu'))
     #   model.add(tf.keras.layers.Dropout(0.5))
-#  model.add(Dense(units=8, activation='relu'))
 model.add(Dense(units=1, activation='linear'))
 model.compile(optimizer='adam', loss='mse', metrics=['mape','mae']) 
 
@@ -83,23 +82,18 @@ print(model.predict(test_data))
 loss_and_metrics = model.evaluate(test_data, test_label, batch_size=32)
 fore_data = model.predict(test_data, batch_size=32)  # 通过predict函数输出网络的预测值
 
-fig1=plt.figure(1) # 图像1显示测试数据的房价和网络利用测试数据得到的预测房价
-plt.plot(test_label, label='real data')
-plt.plot(fore_data, label='forecasting data')
-plt.xlabel('epochs')
-plt.ylabel('coverage rate')
-plt.title('predicted data')
-plt.legend()
-fig1.savefig('f1.png')
+# record
+myFo = open("3s1c_dnn_record", "w")
+myFo.write("loss_and_metrics\n")
+myFo.write(str(loss_and_metrics))
+myFo.write("\nhistory mspe\n")
+myFo.write(str(history.history['mean_absolute_percentage_error']))
+myFo.close()
 
-fig2=plt.figure(2) # 图像2显示网络训练过程中的损失值变化
-plt.plot(history.history['loss'])
-plt.title('loss')
-fig2.savefig('f2.png')
-
-fig3=plt.figure(3) # 图像3显示网络训练过程中的绝对值误差变化
-plt.plot(history.history['mean_absolute_error'])
-plt.title('mean absolute error')
-fig3.savefig('f3.png')
-plt.show()#导出输入的形状等于上一层输出的形状
-
+fig1=plt.figure(1)
+plt.plot(history.history['mean_absolute_percentage_error'])
+plt.xlabel('迭代次数')
+plt.ylabel('mspe')
+plt.title('mean absolute percentage error')
+fig1.savefig('3s3c_mspe.png')
+plt.show()

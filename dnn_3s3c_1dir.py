@@ -8,7 +8,7 @@ from tensorflow.keras import regularizers
 import random
 
 def import_data():
-    path = "./2s2c/"
+    path = "./frozen_data_3s3c/"
     files = os.listdir(path)
     train = []
     label = []
@@ -21,16 +21,16 @@ def import_data():
             line_data[-1] = line_data[-1][0 : -1]
             line_data = list(map(float, line_data))
 
-            line_data[9] = line_data[9]+line_data[10]+line_data[11]
-            train.append(line_data[0 : 9])
-            label.append(line_data[9])
-            if(line_data[9]>240):
+            line_data[14] = line_data[14]+line_data[15]+line_data[16]
+            train.append(line_data[0 : 14])
+            label.append(line_data[14])
+            if(line_data[14]>280):
                  num+=1
         fo.close()
     # np.random.shuffle(train)
     # np.random.shuffle(label)
-    print("better than 240: ", 100*num/len(train), "%\n")
-    train_amount = round(len(train)*0.05)
+    print("better than 280: ", 100*num/len(train), "%\n")
+    train_amount = round(len(train)*0.5)
     training_data = train[0 : train_amount]
     training_label = label[0 : train_amount]
     test_data = train[train_amount : len(train)]
@@ -66,14 +66,14 @@ print("================================")
 
 # nerual network
 model = Sequential()
-model.add(Dense(units=256, activation='relu', input_dim=9))#kernel_regularizer=regularizers.l2(0.1)
+model.add(Dense(units=256, activation='relu', input_dim=14))#kernel_regularizer=regularizers.l2(0.1)
 for i in range(2):
       model.add(Dense(units=256, activation='relu'))
     #   model.add(tf.keras.layers.Dropout(0.5))
 model.add(Dense(units=1, activation='linear'))
 model.compile(optimizer='adam', loss='mse', metrics=['mape','mae']) 
 
-history = model.fit(training_data, training_label, epochs=200,  batch_size=16, verbose=1)# 
+history = model.fit(training_data, training_label, epochs=200,  batch_size=64, verbose=1)# 
 # validation_data=(test_data,test_label), validation_freq=1) 
 # print(model.summary())
 print("===================================================")
@@ -83,7 +83,7 @@ loss_and_metrics = model.evaluate(test_data, test_label, batch_size=32)
 fore_data = model.predict(test_data, batch_size=32)  # 通过predict函数输出网络的预测值
 
 # record
-myFo = open("2s2c_dnn_record", "w")
+myFo = open("3s3c_dnn_record", "w")
 myFo.write("loss_and_metrics\n")
 myFo.write(str(loss_and_metrics))
 myFo.write("\nhistory mspe\n")
@@ -92,8 +92,8 @@ myFo.close()
 
 fig1=plt.figure(1)
 plt.plot(history.history['mean_absolute_percentage_error'])
-plt.xlabel('iterations')
+plt.xlabel('迭代次数')
 plt.ylabel('mspe')
 plt.title('mean absolute percentage error')
-fig1.savefig('2s2c_mspe.png')
+fig1.savefig('3s3c_mspe.png')
 plt.show()
