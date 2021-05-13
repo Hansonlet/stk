@@ -30,11 +30,13 @@ def import_data():
     # np.random.shuffle(train)
     # np.random.shuffle(label)
     print("better than 240: ", 100*num/len(train), "%\n")
-    train_amount = round(len(train)*0.05)
+    # train_amount = round(len(train)*0.05)
+    train_amount = 200000 * 1
+    test_amount = int(train_amount/4)
     training_data = train[0 : train_amount]
     training_label = label[0 : train_amount]
-    test_data = train[train_amount : len(train)]
-    test_label = label[train_amount : len(label)]
+    test_data = train[train_amount : train_amount+test_amount]
+    test_label = label[train_amount : train_amount+test_amount]
     return training_data, training_label, test_data, test_label
 
 
