@@ -91,7 +91,7 @@ jindidian = [90, 270]                                           # 0-360
 shengjiaodian = [0, 60, 120, 180, 240, 300]                     # 0-360
 xiangwei = [45, 90, 135, 180, 225, 270, 315]                    # 0-360
 totalTime = 27 * 24 * 60 * 60 + 7 * 60 * 60                     # 2358000
-txtCount = 2
+txtCount = 3
 
 # 采集最终数据
 txtStr = "data" + str(txtCount) + ".txt"
