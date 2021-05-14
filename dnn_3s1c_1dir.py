@@ -8,7 +8,7 @@ from tensorflow.keras import regularizers
 import random
 
 def import_data():
-    path = "./forzen_data_3s1c/"
+    path = "./3s1c/"
     files = os.listdir(path)
     train = []
     label = []
@@ -29,7 +29,7 @@ def import_data():
         fo.close()
     # np.random.shuffle(train)
     # np.random.shuffle(label)
-    train_amount = 200000 * 1
+    train_amount = 10000 * 2
     test_amount = int(train_amount/4)
     training_data = train[0 : train_amount]
     training_label = label[0 : train_amount]

@@ -20,6 +20,18 @@ def import_data():
             line_data = line.split(" ")
             line_data[-1] = line_data[-1][0 : -1]
             line_data = list(map(float, line_data))
+            
+            # line_data[0] = line_data[1]
+            # line_data[1] = line_data[2]
+            # line_data[2] = line_data[3]
+            # line_data[3] = line_data[5]
+            # line_data[4] = line_data[6]
+            # line_data[5] = line_data[7]
+            # line_data[6] = line_data[8]
+            # line_data[7] = line_data[10]
+            # line_data[8] = line_data[11]
+            # line_data[9] = line_data[12]
+            # line_data[10] = line_data[13]
 
             line_data[14] = line_data[14]+line_data[15]+line_data[16]
             train.append(line_data[0 : 14])
@@ -29,7 +41,7 @@ def import_data():
         fo.close()
     # np.random.shuffle(train)
     # np.random.shuffle(label)
-    train_amount = 10000 * 
+    train_amount = 10000 * 1
     test_amount = int(train_amount/4)
     training_data = train[0 : train_amount]
     training_label = label[0 : train_amount]
@@ -83,6 +95,8 @@ loss_and_metrics = model.evaluate(test_data, test_label, batch_size=32)
 fore_data = model.predict(test_data, batch_size=32)  # 通过predict函数输出网络的预测值
 
 # record
+model.save_weights("3s3c.h5")
+
 myFo = open("3s3c_dnn_record", "w")
 myFo.write("loss_and_metrics\n")
 myFo.write(str(loss_and_metrics))
