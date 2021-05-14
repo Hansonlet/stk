@@ -31,7 +31,7 @@ def import_data():
     # np.random.shuffle(label)
     print("better than 240: ", 100*num/len(train), "%\n")
     # train_amount = round(len(train)*0.05)
-    train_amount = 10000 * 3
+    train_amount = 10000 * 1
     test_amount = int(train_amount/4)
     training_data = train[0 : train_amount]
     training_label = label[0 : train_amount]
@@ -85,7 +85,7 @@ loss_and_metrics = model.evaluate(test_data, test_label, batch_size=32)
 fore_data = model.predict(test_data, batch_size=32)  # 通过predict函数输出网络的预测值
 
 # record
-model.save_weights("2s2c.h5")
+model.save("2s2c.h5")
 
 myFo = open("2s2c_dnn_record", "w")
 myFo.write("loss_and_metrics\n")
