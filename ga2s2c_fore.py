@@ -23,117 +23,27 @@ variation_rate = 0.4
 totalTime = 27 * 24 * 60 * 60 + 7 * 60 * 60                 # 2358000
 startTime = time.time()
 
-
-# model = Sequential()
-# model.add(Dense(units=256, activation='relu', input_dim=6))#kernel_regularizer=regularizers.l2(0.1)
-# for i in range(2):
-#     model.add(Dense(units=256, activation='relu'))
-# model.add(Dense(units=1, activation='linear'))
-# model.compile(optimizer='adam', loss='mse', metrics=['mape','mae']) 
+# load dnn
 model = load_model('2s2c.h5')
-
-def modify(keplerian, a1, a2, a3, a4, a5, a6):
-    # 半长轴长度
-    keplerian.SizeShape.QueryInterface(STKObjects.IAgClassicalSizeShapeSemimajorAxis).SemiMajorAxis = a1
-    # 偏心率
-    keplerian.SizeShape.QueryInterface(STKObjects.IAgClassicalSizeShapeSemimajorAxis).Eccentricity = np.sqrt((1-5/3*np.cos(a3/180*np.pi)*np.cos(a3/180*np.pi)))
-    # degrees 倾角
-    keplerian.Orientation.Inclination = a3
-    # degrees 近地点
-    keplerian.Orientation.ArgOfPerigee = a4
-    # RANN 设置轨道位置
-    keplerian.Orientation.AscNode.QueryInterface(STKObjects.IAgOrientationAscNodeRAAN).Value = a5
-    # 设置卫星在该轨道中的“相位”
-    keplerian.Location.QueryInterface(STKObjects.IAgClassicalLocationTrueAnomaly).Value = a6
+print("---------------- finished import dnn ----------------")
 
 
 def cal(group, scores):
-    # todo xzh
-    for i in range(item_size):
-        # 调整
-        modify(keplerian1, 6500, 0, group[i][0], group[i][1], group[i][2], 0)
-        sat1.Propagator.QueryInterface(
-            STKObjects.IAgVePropagatorJ4Perturbation).InitialState.Representation.Assign(keplerian1)
-        sat1.Propagator.QueryInterface(
-            STKObjects.IAgVePropagatorJ4Perturbation).Propagate()
-        modify(keplerian2, 6500, 0, group[i][3], group[i][4], group[i][5], group[i][6])
-        sat2.Propagator.QueryInterface(
-            STKObjects.IAgVePropagatorJ4Perturbation).InitialState.Representation.Assign(keplerian2)
-        sat2.Propagator.QueryInterface(
-            STKObjects.IAgVePropagatorJ4Perturbation).Propagate()
-
-        # 计算
-        chain1.ComputeAccess()
-        chain2.ComputeAccess()
-        chain3.ComputeAccess()
-        chainResults1 = chainTemp1.DataProviders.GetDataPrvIntervalFromPath(
-            "Complete Access").Exec(sc2.StartTime, sc2.StopTime)
-        chainResults2 = chainTemp2.DataProviders.GetDataPrvIntervalFromPath(
-            "Complete Access").Exec(sc2.StartTime, sc2.StopTime)
-        chainResults3 = chainTemp3.DataProviders.GetDataPrvIntervalFromPath(
-            "Complete Access").Exec(sc2.StartTime, sc2.StopTime)
-        if chainResults1.DataSets.Count != 0:
-            coverage1 = sum(chainResults1.DataSets.GetDataSetByName(
-                "Duration").GetValues()) / totalTime * 100
-        else:
-            coverage1 = 0
-        if chainResults2.DataSets.Count != 0:
-            coverage2 = sum(chainResults2.DataSets.GetDataSetByName(
-                "Duration").GetValues()) / totalTime * 100
-        else:
-            coverage2 = 0
-        if chainResults3.DataSets.Count != 0:
-            coverage3 = sum(chainResults3.DataSets.GetDataSetByName(
-                "Duration").GetValues()) / totalTime * 100
-        else:
-            coverage3 = 0
-
-        # 得分
-        scores[i] = coverage1 + coverage2 + coverage3
-    return scores
-
-def cal_once(group):
+    group_to_cal = group
     # 调整
-    modify(keplerian1, 6500, 0, group[0], group[1], group[2], 0)
-    sat1.Propagator.QueryInterface(
-        STKObjects.IAgVePropagatorJ4Perturbation).InitialState.Representation.Assign(keplerian1)
-    sat1.Propagator.QueryInterface(
-        STKObjects.IAgVePropagatorJ4Perturbation).Propagate()
-    modify(keplerian2, 6500, 0, group[3], group[4], group[5], group[6])
-    sat2.Propagator.QueryInterface(
-        STKObjects.IAgVePropagatorJ4Perturbation).InitialState.Representation.Assign(keplerian2)
-    sat2.Propagator.QueryInterface(
-        STKObjects.IAgVePropagatorJ4Perturbation).Propagate()
-
+    group_to_cal[:][0] = group[:][0]*
+    group_to_cal[:][1] = group[:][0]
+    group_to_cal[:][2] = group[:][1]
+    group_to_cal[:][3] = group[:][2]
+    group_to_cal[:][4] = group[:][3]*
+    group_to_cal[:][5] = group[:][3]
+    group_to_cal[:][6] = group[:][4]
+    group_to_cal[:][7] = group[:][5]
+    group_to_cal[:][8] = group[:][6]
     # 计算
-    chain1.ComputeAccess()
-    chain2.ComputeAccess()
-    chain3.ComputeAccess()
-    chainResults1 = chainTemp1.DataProviders.GetDataPrvIntervalFromPath(
-        "Complete Access").Exec(sc2.StartTime, sc2.StopTime)
-    chainResults2 = chainTemp2.DataProviders.GetDataPrvIntervalFromPath(
-        "Complete Access").Exec(sc2.StartTime, sc2.StopTime)
-    chainResults3 = chainTemp3.DataProviders.GetDataPrvIntervalFromPath(
-        "Complete Access").Exec(sc2.StartTime, sc2.StopTime)
-    if chainResults1.DataSets.Count != 0:
-        coverage1 = sum(chainResults1.DataSets.GetDataSetByName(
-            "Duration").GetValues()) / totalTime * 100
-    else:
-        coverage1 = 0
-    if chainResults2.DataSets.Count != 0:
-        coverage2 = sum(chainResults2.DataSets.GetDataSetByName(
-            "Duration").GetValues()) / totalTime * 100
-    else:
-        coverage2 = 0
-    if chainResults3.DataSets.Count != 0:
-        coverage3 = sum(chainResults3.DataSets.GetDataSetByName(
-            "Duration").GetValues()) / totalTime * 100
-    else:
-        coverage3 = 0
+    scores = model.predict(group_to_cal)
 
-    # 得分
-    score = coverage1 + coverage2 + coverage3
-    return score
+    return scores
 
 
 def init():
@@ -143,7 +53,7 @@ def init():
         while 1:
             # 半长轴 6500
             # 偏心率 0 ~ 0.61
-            # 倾角,39.24~52.14
+            # 倾角,39.24 ~ 52.14
             group[i][0] = random.random()*12.9+39.24
             group[i][3] = random.random()*12.9+39.24
             # 近地点,0-180
