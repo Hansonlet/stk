@@ -91,6 +91,7 @@ def modify(keplerian, a1, a2, a3, a4, a5, a6):
 
 
 def cal(group, scores):
+    # todo xzh
     for i in range(item_size):
         # 调整
         modify(keplerian1, 6500, 0, group[i][0], group[i][1], group[i][2], 0)
@@ -239,6 +240,7 @@ def choose(group, scores):
 
 
 def cross(group):
+    # todo xzh
     times = int(item_size * cross_rate)
     for i in range(times):
         num_a = random.randint(0, item_size-2)
