@@ -280,10 +280,7 @@ def variation(group):
         if (pos == 0):
             group[num][pos] = random.random()*13+39.24
         elif (pos == 1):
-            if random.random()>0.5:
-                group[num][pos] = 90
-            else:
-                group[num][pos] = 270
+            group[num][pos] = (group[num][pos]+180)%360
         elif (pos == 2):
             group[num][pos] = random.random()*360
         elif (pos == 3 | pos == 4):

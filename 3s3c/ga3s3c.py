@@ -14,7 +14,7 @@ pr.enable()
 
 # gobal parms
 item_size = 300
-gen = 100
+gen = 200
 cross_rate = 0.5
 variation_rate = 0.4
 totalTime = 27 * 24 * 60 * 60 + 7 * 60 * 60                 # 2358000
@@ -292,10 +292,7 @@ def variation(group):
         if (pos == 0 | pos == 3 | pos == 7 ):
             group[num][pos] = random.random()*13+39.24
         elif (pos == 1 | pos == 4 | pos == 8):
-            if random.random()>0.5:
-                group[num][pos] = 90
-            else:
-                group[num][pos] = 270
+            group[num][pos] = (group[num][pos]+180)%360
         elif (pos == 2 | pos == 5 | pos == 9):
             group[num][pos] = random.random()*360
         elif (pos == 6 | pos == 10):
