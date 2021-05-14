@@ -29,7 +29,7 @@ def import_data():
         fo.close()
     # np.random.shuffle(train)
     # np.random.shuffle(label)
-    train_amount = 10000 * 2
+    train_amount = 10000 * 1
     test_amount = int(train_amount/4)
     training_data = train[0 : train_amount]
     training_label = label[0 : train_amount]
