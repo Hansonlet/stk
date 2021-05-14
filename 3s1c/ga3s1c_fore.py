@@ -20,15 +20,16 @@ print("---------------- finished import dnn ----------------")
 
 
 def cal(group, scores):
-    group_to_cal = [[0 for col in range(7)] for row in range(item_size)]
+    group_to_cal = [[0 for col in range(6)] for row in range(item_size)]
     # 调整
     for i in range(item_size):
         group_to_cal[i][0]= np.sqrt((1-5/3*np.cos(group[i][0]/180*np.pi)*np.cos(group[i][0]/180*np.pi)))
         group_to_cal[i][1] = group[i][0]
         group_to_cal[i][2] = group[i][1]
         group_to_cal[i][3] = group[i][2]
-        group_to_cal[i][5] = group[i][3]
-        group_to_cal[i][6] = group[i][4]
+        group_to_cal[i][4] = group[i][3]
+        group_to_cal[i][5] = group[i][4]
+  
     # 计算
     group_to_cal = np.array(group_to_cal)
     scores_np = model.predict(group_to_cal)
