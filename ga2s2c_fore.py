@@ -2,11 +2,14 @@ import random
 import time
 import numpy as np
 import matplotlib.pyplot as plt
-import comtypes
-from comtypes.gen import STKUtil
-from comtypes.gen import STKObjects
-from comtypes.client import GetActiveObject
 import cProfile, pstats, io
+
+import os
+import tensorflow as tf
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense
+from tensorflow.keras import regularizers
+from tensorflow.keras.models import load_model
 
 # 火焰图
 pr = cProfile.Profile()
@@ -20,60 +23,14 @@ variation_rate = 0.4
 totalTime = 27 * 24 * 60 * 60 + 7 * 60 * 60                 # 2358000
 startTime = time.time()
 
-print("---------------- begin STK init ----------------")
-# init STK
-uiApplication = GetActiveObject('STK10.Application')
-uiApplication.Visible = False
-root = uiApplication.Personality2
-sc = root.CurrentScenario
-sc2 = sc.QueryInterface(STKObjects.IAgScenario)
 
-# 获取卫星
-satTemp1 = sc.Children.Item('sat1')
-sat1 = satTemp1.QueryInterface(STKObjects.IAgSatellite)
-satTemp2 = sc.Children.Item('sat2')
-sat2 = satTemp2.QueryInterface(STKObjects.IAgSatellite)
-
-# 获取链路
-chainTemp1 = sc.Children.Item("ChainChidao")
-chain1 = chainTemp1.QueryInterface(STKObjects.IAgChain)
-chainTemp2 = sc.Children.Item("ChainNanji")
-chain2 = chainTemp2.QueryInterface(STKObjects.IAgChain)
-chainTemp3 = sc.Children.Item("ChainYuebei")
-chain3 = chainTemp3.QueryInterface(STKObjects.IAgChain)
-
-# 获取卫星参数修改句柄
-sat1.SetPropagatorType(STKObjects.ePropagatorJ4Perturbation)
-J4Propagator1 = sat1.Propagator.QueryInterface(
-    STKObjects.IAgVePropagatorJ4Perturbation)
-keplerian1 = J4Propagator1.InitialState.Representation.ConvertTo(
-    STKUtil.eOrbitStateClassical).QueryInterface(STKObjects.IAgOrbitStateClassical)
-keplerian1.SizeShapeType = STKObjects.eSizeShapeSemimajorAxis
-keplerian1.Orientation.AscNodeType = STKObjects.eAscNodeRAAN
-keplerian1.LocationType = STKObjects.eLocationTrueAnomaly
-sat2.SetPropagatorType(STKObjects.ePropagatorJ4Perturbation)
-J4Propagator2 = sat2.Propagator.QueryInterface(
-    STKObjects.IAgVePropagatorJ4Perturbation) 
-keplerian2 = J4Propagator2.InitialState.Representation.ConvertTo(
-    STKUtil.eOrbitStateClassical).QueryInterface(STKObjects.IAgOrbitStateClassical)
-keplerian2.SizeShapeType = STKObjects.eSizeShapeSemimajorAxis
-keplerian2.Orientation.AscNodeType = STKObjects.eAscNodeRAAN
-keplerian2.LocationType = STKObjects.eLocationTrueAnomaly
-print("---------------- finish STK init ----------------")
-
-
-# def import_init_data():
-#     data = []
-#     fo = open("ga_good_init_data.txt", "r")
-#     for line in fo:
-#         line_data = line.split(" ")
-#         line_data[-1] = line_data[-1][0 : -1]
-#         line_data = list(map(float, line_data))
-#         data.append(line_data[0 : 10])
-#     fo.close()
-#     np.random.shuffle(data) 
-#     return data[0:item_size]
-
+# model = Sequential()
+# model.add(Dense(units=256, activation='relu', input_dim=6))#kernel_regularizer=regularizers.l2(0.1)
+# for i in range(2):
+#     model.add(Dense(units=256, activation='relu'))
+# model.add(Dense(units=1, activation='linear'))
+# model.compile(optimizer='adam', loss='mse', metrics=['mape','mae']) 
+model = load_model('2s2c.h5')
 
 def modify(keplerian, a1, a2, a3, a4, a5, a6):
     # 半长轴长度
@@ -275,7 +232,7 @@ def variation(group):
 
     return group
 
-def main_ga():
+def main_ga():  
     [group, scores] = init()
     best_scores = [0 for col in range(gen+1)]
     ave_scores = [0 for col in range(gen+1)]
