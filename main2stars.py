@@ -80,7 +80,7 @@ jindidian = [90, 270]                                           # 0-360
 shengjiaodian = [0, 60, 120, 180, 240, 300]                     # 0-360，45间隔如何？下同
 xiangwei = [60, 120, 180, 240, 300]                             # 0-360
 totalTime = 27 * 24 * 60 * 60 + 7 * 60 * 60                     # 2358000
-txtCount = 0
+txtCount = 1
 
 # 采集最终数据
 # for a1 in banchangzhou:
