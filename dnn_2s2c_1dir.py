@@ -31,7 +31,7 @@ def import_data():
     # np.random.shuffle(label)
     print("better than 240: ", 100*num/len(train), "%\n")
     # train_amount = round(len(train)*0.05)
-    train_amount = 10000 * 1
+    train_amount = 10000 * 3
     test_amount = int(train_amount/4)
     training_data = train[0 : train_amount]
     training_label = label[0 : train_amount]
