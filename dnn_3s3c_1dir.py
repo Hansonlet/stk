@@ -36,7 +36,7 @@ def import_data():
             line_data[14] = line_data[14]+line_data[15]+line_data[16]
             train.append(line_data[0 : 14])
             label.append(line_data[14])
-            if(line_data[14]>280):
+            if(line_data[14]>290):
                  num+=1
         fo.close()
     # np.random.shuffle(train)
@@ -85,7 +85,10 @@ for i in range(2):
 model.add(Dense(units=1, activation='linear'))
 model.compile(optimizer='adam', loss='mse', metrics=['mape','mae']) 
 
-history = model.fit(training_data, training_label, epochs=200,  batch_size=64, verbose=1)# 
+startTime = time.time()
+history = model.fit(training_data, training_label, epochs=200,  batch_size=16, verbose=1)# 
+endTime = time.time()
+print("================ time cost: ", endTime-startTime)
 # validation_data=(test_data,test_label), validation_freq=1) 
 # print(model.summary())
 print("===================================================")

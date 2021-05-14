@@ -6,6 +6,7 @@ from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense
 from tensorflow.keras import regularizers
 import random
+import time
 
 def import_data():
     path = "./2s2c/"
@@ -75,7 +76,10 @@ for i in range(2):
 model.add(Dense(units=1, activation='linear'))
 model.compile(optimizer='adam', loss='mse', metrics=['mape','mae']) 
 
+startTime = time.time()
 history = model.fit(training_data, training_label, epochs=200,  batch_size=16, verbose=1)# 
+endTime = time.time()
+print("================ time cost: ", endTime-startTime)
 # validation_data=(test_data,test_label), validation_freq=1) 
 # print(model.summary())
 print("===================================================")
