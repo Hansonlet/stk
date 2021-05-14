@@ -15,7 +15,7 @@ pr.enable()
 # gobal parms
 item_size = 100
 gen = 100
-cross_rate = 0.3
+cross_rate = 0.5
 variation_rate = 0.4
 totalTime = 27 * 24 * 60 * 60 + 7 * 60 * 60                 # 2358000
 startTime = time.time()
@@ -256,10 +256,11 @@ def choose(group, scores):
 
 
 def cross(group):
-    times = int(item_size * cross_rate)
-    for i in range(times):
-        num_a = random.randint(0, item_size-2)
-        num_b = random.randint(0, item_size-2)
+    for i in range(int(item_size/2)):
+        if random.random()>cross_rate:
+            continue
+        num_a = i*2
+        num_b = i*2+1
         temp_pos1 = random.randint(0, 4)
         temp_pos2 = random.randint(0, 4)
         pos1 = min(temp_pos1, temp_pos2)
@@ -274,7 +275,7 @@ def cross(group):
 def variation(group):
     times = int(item_size * variation_rate)
     for i in range(times):
-        num = random.randint(0, item_size-2)
+        num = random.randint(0, item_size-1)
         pos = random.randint(0, 4)
         if (pos == 0):
             group[num][pos] = random.random()*13+39.24
@@ -318,14 +319,11 @@ def main_ga():
         print(best_scores[i+1])
         print(ave_scores[i+1])
         print(best_items[i+1][:])
-        print("================================================\n\n\n")
+        print("================================================\n\n")
 
     endTime = time.time()
     print("time: ", endTime - startTime)
     return [best_scores, ave_scores, best_items, endTime]
-
-    
-
     
 
 
@@ -369,17 +367,16 @@ myFo = open(txtStr, "w")
 myFo.write("time_cost\n")
 myFo.write(str(endTime - startTime))
 myFo.write("\n")
-
 myFo.wirte("best_score\n")
 myFo.write(str(best_scores))
 myFo.write("\n")
-
 myFo.wirte("ave_score\n")
 myFo.write(str(ave_scores))
 myFo.write("\n")
-
 myFo.wirte("best_item\n")
-myFo.write(str(best_item))
+myFo.write(str(best_items))
+
+myFo.close()
 
 # 火焰图执行步骤
 # python -m cProfile -s cumtime ga.py

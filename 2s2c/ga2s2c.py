@@ -13,9 +13,9 @@ pr = cProfile.Profile()
 pr.enable()
 
 # gobal parms
-item_size = 300
-gen = 100
-cross_rate = 0.3
+item_size = 200
+gen = 200
+cross_rate = 0.5
 variation_rate = 0.4
 totalTime = 27 * 24 * 60 * 60 + 7 * 60 * 60                 # 2358000
 startTime = time.time()
@@ -33,8 +33,6 @@ satTemp1 = sc.Children.Item('sat1')
 sat1 = satTemp1.QueryInterface(STKObjects.IAgSatellite)
 satTemp2 = sc.Children.Item('sat2')
 sat2 = satTemp2.QueryInterface(STKObjects.IAgSatellite)
-satTemp3 = sc.Children.Item('sat3')
-sat3 = satTemp3.QueryInterface(STKObjects.IAgSatellite)
 
 # 获取链路
 chainTemp1 = sc.Children.Item("ChainChidao")
@@ -53,7 +51,6 @@ keplerian1 = J4Propagator1.InitialState.Representation.ConvertTo(
 keplerian1.SizeShapeType = STKObjects.eSizeShapeSemimajorAxis
 keplerian1.Orientation.AscNodeType = STKObjects.eAscNodeRAAN
 keplerian1.LocationType = STKObjects.eLocationTrueAnomaly
-
 sat2.SetPropagatorType(STKObjects.ePropagatorJ4Perturbation)
 J4Propagator2 = sat2.Propagator.QueryInterface(
     STKObjects.IAgVePropagatorJ4Perturbation) 
@@ -62,15 +59,6 @@ keplerian2 = J4Propagator2.InitialState.Representation.ConvertTo(
 keplerian2.SizeShapeType = STKObjects.eSizeShapeSemimajorAxis
 keplerian2.Orientation.AscNodeType = STKObjects.eAscNodeRAAN
 keplerian2.LocationType = STKObjects.eLocationTrueAnomaly
-
-sat3.SetPropagatorType(STKObjects.ePropagatorJ4Perturbation)
-J4Propagator3 = sat3.Propagator.QueryInterface(
-    STKObjects.IAgVePropagatorJ4Perturbation) 
-keplerian3 = J4Propagator3.InitialState.Representation.ConvertTo(
-    STKUtil.eOrbitStateClassical).QueryInterface(STKObjects.IAgOrbitStateClassical)
-keplerian3.SizeShapeType = STKObjects.eSizeShapeSemimajorAxis
-keplerian3.Orientation.AscNodeType = STKObjects.eAscNodeRAAN
-keplerian3.LocationType = STKObjects.eLocationTrueAnomaly
 print("---------------- finish STK init ----------------")
 
 
@@ -103,6 +91,7 @@ def modify(keplerian, a1, a2, a3, a4, a5, a6):
 
 
 def cal(group, scores):
+    # todo xzh
     for i in range(item_size):
         # 调整
         modify(keplerian1, 6500, 0, group[i][0], group[i][1], group[i][2], 0)
@@ -114,11 +103,6 @@ def cal(group, scores):
         sat2.Propagator.QueryInterface(
             STKObjects.IAgVePropagatorJ4Perturbation).InitialState.Representation.Assign(keplerian2)
         sat2.Propagator.QueryInterface(
-            STKObjects.IAgVePropagatorJ4Perturbation).Propagate()
-        modify(keplerian3, 6500, 0, group[i][7], group[i][8], group[i][9], group[i][10])
-        sat3.Propagator.QueryInterface(
-            STKObjects.IAgVePropagatorJ4Perturbation).InitialState.Representation.Assign(keplerian3)
-        sat3.Propagator.QueryInterface(
             STKObjects.IAgVePropagatorJ4Perturbation).Propagate()
 
         # 计算
@@ -163,11 +147,6 @@ def cal_once(group):
         STKObjects.IAgVePropagatorJ4Perturbation).InitialState.Representation.Assign(keplerian2)
     sat2.Propagator.QueryInterface(
         STKObjects.IAgVePropagatorJ4Perturbation).Propagate()
-    modify(keplerian3, 6500, 0, group[7], group[8], group[9], group[10])
-    sat3.Propagator.QueryInterface(
-        STKObjects.IAgVePropagatorJ4Perturbation).InitialState.Representation.Assign(keplerian3)
-    sat3.Propagator.QueryInterface(
-        STKObjects.IAgVePropagatorJ4Perturbation).Propagate()
 
     # 计算
     chain1.ComputeAccess()
@@ -202,7 +181,7 @@ def cal_once(group):
 
 def init():
     print("---------------- begin GA init ----------------")
-    group = [[0 for col in range(11)] for row in range(item_size)]
+    group = [[0 for col in range(7)] for row in range(item_size)]
     for i in range(item_size):
         while 1:
             # 半长轴 6500
@@ -210,7 +189,6 @@ def init():
             # 倾角,39.24~52.14
             group[i][0] = random.random()*12.9+39.24
             group[i][3] = random.random()*12.9+39.24
-            group[i][7] = random.random()*12.9+39.24
             # 近地点,0-180
             if random.random()>0.5:
                 group[i][1] = 90
@@ -220,17 +198,11 @@ def init():
                 group[i][4] = 90
             else:
                 group[i][4] = 270
-            if random.random()>0.5:
-                group[i][8] = 90
-            else:
-                group[i][8] = 270
             # 升交点,0-360
             group[i][2] = random.random()*360
             group[i][5] = random.random()*360
-            group[i][9] = random.random()*360
             # 相位，0-360
             group[i][6] = random.random()*360
-            group[i][10] = random.random()*360
             break
 
     # group = import_init_data()
@@ -243,7 +215,7 @@ def init():
 
 
 def choose(group, scores):
-    new_group = [[0 for col in range(11)] for row in range(item_size)]
+    new_group = [[0 for col in range(7)] for row in range(item_size)]
     p_choose = [0 for col in range(item_size)]
     sum_score = sum(scores)
     accumulate = 0
@@ -268,12 +240,13 @@ def choose(group, scores):
 
 
 def cross(group):
-    times = int(item_size * cross_rate)
-    for i in range(times):
-        num_a = random.randint(0, item_size-2)
-        num_b = random.randint(0, item_size-2)
-        temp_pos1 = random.randint(0, 10)
-        temp_pos2 = random.randint(0, 10)
+    for i in range(int(item_size/2)):
+        if random.random()>cross_rate:
+            continue
+        num_a = i*2
+        num_b = i*2+1
+        temp_pos1 = random.randint(0, 6)
+        temp_pos2 = random.randint(0, 6)
         pos1 = min(temp_pos1, temp_pos2)
         pos2 = max(temp_pos1, temp_pos2)
 
@@ -286,27 +259,27 @@ def cross(group):
 def variation(group):
     times = int(item_size * variation_rate)
     for i in range(times):
-        num = random.randint(0, item_size-2)
-        pos = random.randint(0, 10)
-        if (pos == 0 | pos == 3 | pos == 7 ):
+        num = random.randint(0, item_size-1)
+        pos = random.randint(0, 6)
+        if (pos == 0 | pos == 3):
             group[num][pos] = random.random()*13+39.24
-        elif (pos == 1 | pos == 4 | pos == 8):
+        elif (pos == 1 | pos == 4):
             if random.random()>0.5:
                 group[num][pos] = 90
             else:
                 group[num][pos] = 270
-        elif (pos == 2 | pos == 5 | pos == 9):
+        elif (pos == 2 | pos == 5):
             group[num][pos] = random.random()*360
-        elif (pos == 6 | pos == 10):
+        elif (pos == 6):
             group[num][pos] = random.random()*360
-    return group
 
+    return group
 
 def main_ga():
     [group, scores] = init()
     best_scores = [0 for col in range(gen+1)]
     ave_scores = [0 for col in range(gen+1)]
-    best_items = [[0 for col in range(11)] for row in range(gen+1)]
+    best_items = [[0 for col in range(7)] for row in range(gen+1)]
     best_scores[0] = max(scores)
     ave_scores[0] = np.mean(scores)
     best_items[0][:] = group[scores.index(max(scores))][:]
@@ -330,14 +303,11 @@ def main_ga():
         print(best_scores[i+1])
         print(ave_scores[i+1])
         print(best_items[i+1][:])
-        print("================================================\n\n\n")
+        print("================================================\n\n")
 
     endTime = time.time()
     print("time: ", endTime - startTime)
     return [best_scores, ave_scores, best_items, endTime]
-
-    
-
     
 
 
@@ -357,7 +327,7 @@ pr.dump_stats("C:\\ProgramData\\Anaconda3\\Lib\\site-packages\\__pycache__\\requ
 # plot
 fig1 = plt.figure(1)
 plt.plot(best_scores)
-plt.xlabel('代数')
+plt.xlabel('gen')
 plt.ylabel('best_score')
 plt.title('best_score of GA')
 fig1.savefig('best.png')
@@ -375,23 +345,22 @@ print("ave: ", ave_scores)
 print("items: ", best_items)
 plt.show()
 
-txtStr = "ga3s3c.txt"
+txtStr = "ga2s2c.txt"
 myFo = open(txtStr, "w")
 
 myFo.write("time_cost\n")
 myFo.write(str(endTime - startTime))
 myFo.write("\n")
-
 myFo.wirte("best_score\n")
 myFo.write(str(best_scores))
 myFo.write("\n")
-
 myFo.wirte("ave_score\n")
 myFo.write(str(ave_scores))
 myFo.write("\n")
-
 myFo.wirte("best_item\n")
-myFo.write(str(best_item))
+myFo.write(str(best_items))
+
+myFo.close()
 
 # 火焰图执行步骤
 # python -m cProfile -s cumtime ga.py

@@ -2,23 +2,14 @@ import random
 import time
 import numpy as np
 import matplotlib.pyplot as plt
-import cProfile, pstats, io
-
 import os
 import tensorflow as tf
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense
-from tensorflow.keras import regularizers
 from tensorflow.keras.models import load_model
-
-# 火焰图
-pr = cProfile.Profile()
-pr.enable()
 
 # gobal parms
 item_size = 200
 gen = 200
-cross_rate = 0.3
+cross_rate = 0.5
 variation_rate = 0.4
 totalTime = 27 * 24 * 60 * 60 + 7 * 60 * 60                 # 2358000
 startTime = time.time()
@@ -29,20 +20,24 @@ print("---------------- finished import dnn ----------------")
 
 
 def cal(group, scores):
-    group_to_cal = group
+    group_to_cal = [[0 for col in range(9)] for row in range(item_size)]
     # 调整
-    group_to_cal[:][0] = group[:][0]*
-    group_to_cal[:][1] = group[:][0]
-    group_to_cal[:][2] = group[:][1]
-    group_to_cal[:][3] = group[:][2]
-    group_to_cal[:][4] = group[:][3]*
-    group_to_cal[:][5] = group[:][3]
-    group_to_cal[:][6] = group[:][4]
-    group_to_cal[:][7] = group[:][5]
-    group_to_cal[:][8] = group[:][6]
+    for i in range(item_size):
+        group_to_cal[i][0]= np.sqrt((1-5/3*np.cos(group[i][0]/180*np.pi)*np.cos(group[i][0]/180*np.pi)))
+        group_to_cal[i][1] = group[i][0]
+        group_to_cal[i][2] = group[i][1]
+        group_to_cal[i][3] = group[i][2]
+        group_to_cal[i][4] = np.sqrt((1-5/3*np.cos(group[i][3]/180*np.pi)*np.cos(group[i][3]/180*np.pi)))
+        group_to_cal[i][5] = group[i][3]
+        group_to_cal[i][6] = group[i][4]
+        group_to_cal[i][7] = group[i][5]
+        group_to_cal[i][8] = group[i][6]
     # 计算
-    scores = model.predict(group_to_cal)
-
+    group_to_cal = np.array(group_to_cal)
+    scores_np = model.predict(group_to_cal)
+    scores = [0 for col in range(item_size)]
+    for i in range(item_size):
+        scores[i] = scores_np[i]
     return scores
 
 
@@ -72,7 +67,6 @@ def init():
             group[i][6] = random.random()*360
             break
 
-    # group = import_init_data()
     scores = [0 for col in range(item_size)]
     scores = cal(group, scores)
     print("==== init scores:", scores)
@@ -92,26 +86,25 @@ def choose(group, scores):
         p_choose[i] = accumulate / sum_score
 
     # 轮盘 do
-    for i in range(item_size-2):
+    for i in range(item_size):
         rand_num = random.random()
         for j in range(item_size):
             if rand_num <= p_choose[j]:
                 new_group[i][:] = group[j][:]
                 break
 
-    # 保留最优解，一个不动，两个参与交叉变异
+    # 保留最优解
     best_item = group[scores.index(max(scores))][:]
-    new_group[item_size-1][:] = best_item
-    new_group[item_size-2][:] = best_item
+    new_group[0][:] = best_item
     return [best_item, new_group]
 
 
 def cross(group):
-    # todo xzh
-    times = int(item_size * cross_rate)
-    for i in range(times):
-        num_a = random.randint(0, item_size-2)
-        num_b = random.randint(0, item_size-2)
+    for i in range(int(item_size/2)):
+        if random.random()>cross_rate:
+            continue
+        num_a = i*2
+        num_b = i*2+1
         temp_pos1 = random.randint(0, 6)
         temp_pos2 = random.randint(0, 6)
         pos1 = min(temp_pos1, temp_pos2)
@@ -126,15 +119,12 @@ def cross(group):
 def variation(group):
     times = int(item_size * variation_rate)
     for i in range(times):
-        num = random.randint(0, item_size-2)
+        num = random.randint(0, item_size-1)
         pos = random.randint(0, 6)
         if (pos == 0 | pos == 3):
             group[num][pos] = random.random()*13+39.24
         elif (pos == 1 | pos == 4):
-            if random.random()>0.5:
-                group[num][pos] = 90
-            else:
-                group[num][pos] = 270
+            group[num][pos] = (group[num][pos]+180) % 360
         elif (pos == 2 | pos == 5):
             group[num][pos] = random.random()*360
         elif (pos == 6):
@@ -170,29 +160,18 @@ def main_ga():
         print(best_scores[i+1])
         print(ave_scores[i+1])
         print(best_items[i+1][:])
-        print("================================================\n\n\n")
+        print("================================================\n\n")
 
     endTime = time.time()
     print("time: ", endTime - startTime)
-    return [best_scores, ave_scores, best_items, endTime]
+    best_scores_to_print = [0 for col in range(gen+1)]
+    for i in range(gen+1):
+        best_scores_to_print[i] = float(best_scores[i])
+    return [best_scores_to_print, ave_scores, best_items, endTime, group]
 
     
 
-    
-
-
-[best_scores, ave_scores, best_items, endTime] = main_ga()
-
-# 火焰图
-pr.disable()
-pr.dump_stats("C:\\ProgramData\\Anaconda3\\Lib\\site-packages\\__pycache__\\request.prof")
-# pr.dump_stats("request.prof")
-# s = io.StringIO()
-# sortby = "cumtime"  # 仅适用于 3.6, 3.7 把这里改成常量了
-# ps = pstats.Stats(pr, stream=s).sort_stats(sortby)
-# ps.print_stats()
-# print(s.getvalue())
-
+[best_scores, ave_scores, best_items, endTime, group] = main_ga()
 
 # plot
 fig1 = plt.figure(1)
@@ -200,40 +179,35 @@ plt.plot(best_scores)
 plt.xlabel('gen')
 plt.ylabel('best_score')
 plt.title('best_score of GA')
-fig1.savefig('best.png')
+fig1.savefig('ga2s2c_best_fore.png')
 
 fig2 = plt.figure(2)
 plt.plot(ave_scores)
 plt.xlabel('gen')
 plt.ylabel('average_score')
 plt.title('average_score of GA')
-fig2.savefig('average.png')
+fig2.savefig('ga2s2c_average_fore.png')
 
 print("================================")
 print("best: ", best_scores)
-print("ave: ", ave_scores)
-print("items: ", best_items)
+# print("ave: ", ave_scores)
+# print("items: ", best_items)
 plt.show()
 
-txtStr = "ga2s2c.txt"
+txtStr = "ga2s2c_fore.txt"
 myFo = open(txtStr, "w")
-
 myFo.write("time_cost\n")
 myFo.write(str(endTime - startTime))
 myFo.write("\n")
-
-myFo.wirte("best_score\n")
+myFo.write("best_score\n")
 myFo.write(str(best_scores))
 myFo.write("\n")
-
-myFo.wirte("ave_score\n")
+myFo.write("ave_score\n")
 myFo.write(str(ave_scores))
 myFo.write("\n")
-
-myFo.wirte("best_item\n")
-myFo.write(str(best_item))
-
-# 火焰图执行步骤
-# python -m cProfile -s cumtime ga.py
-# cd C:\ProgramData\Anaconda3\Lib\site-packages\__pycache__
-# python flameprof.cpython-37.pyc request.prof > c:\stk\requests.svg
+myFo.write("best_item\n")
+myFo.write(str(best_items))
+myFo.write("\n")
+myFo.write("group\n")
+myFo.write(str(group))
+myFo.close()
