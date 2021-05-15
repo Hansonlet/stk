@@ -9,7 +9,7 @@ import random
 import time
 
 def import_data():
-    path = "./2s2c/"
+    path = "./2s2c_data/"
     files = os.listdir(path)
     train = []
     label = []
@@ -32,7 +32,7 @@ def import_data():
     # np.random.shuffle(label)
     print("better than 240: ", 100*num/len(train), "%\n")
     # train_amount = round(len(train)*0.05)
-    train_amount = 10000 * 3
+    train_amount = 10000 * 5
     test_amount = int(train_amount/4)
     training_data = train[0 : train_amount]
     training_label = label[0 : train_amount]
@@ -74,7 +74,7 @@ for i in range(2):
       model.add(Dense(units=256, activation='relu'))
     #   model.add(tf.keras.layers.Dropout(0.5))
 model.add(Dense(units=1, activation='linear'))
-model.compile(optimizer='adam', loss='mse', metrics=['mape','mae']) 
+model.compile(optimizer='adam', loss='mse', metrics=['mape','mae'])
 
 startTime = time.time()
 history = model.fit(training_data, training_label, epochs=200,  batch_size=16, verbose=1)# 
