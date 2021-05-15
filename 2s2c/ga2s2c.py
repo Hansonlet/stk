@@ -264,10 +264,7 @@ def variation(group):
         if (pos == 0 | pos == 3):
             group[num][pos] = random.random()*13+39.24
         elif (pos == 1 | pos == 4):
-            if random.random()>0.5:
-                group[num][pos] = 90
-            else:
-                group[num][pos] = 270
+            group[num][pos] = (group[num][pos]+180) % 360
         elif (pos == 2 | pos == 5):
             group[num][pos] = random.random()*360
         elif (pos == 6):
@@ -304,7 +301,9 @@ def main_ga():
         print(ave_scores[i+1])
         print(best_items[i+1][:])
         print("================================================\n\n")
-
+        print((best_scores[i+1]-ave_scores[i+1])/best_scores[i+1]*100, "%")
+        if (best_scores[i+1]-ave_scores[i+1])/best_scores[i+1]*100 < 3:
+            break
     endTime = time.time()
     print("time: ", endTime - startTime)
     return [best_scores, ave_scores, best_items, endTime]
@@ -351,13 +350,13 @@ myFo = open(txtStr, "w")
 myFo.write("time_cost\n")
 myFo.write(str(endTime - startTime))
 myFo.write("\n")
-myFo.wirte("best_score\n")
+myFo.write("best_score\n")
 myFo.write(str(best_scores))
 myFo.write("\n")
-myFo.wirte("ave_score\n")
+myFo.write("ave_score\n")
 myFo.write(str(ave_scores))
 myFo.write("\n")
-myFo.wirte("best_item\n")
+myFo.write("best_item\n")
 myFo.write(str(best_items))
 
 myFo.close()

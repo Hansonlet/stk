@@ -154,6 +154,9 @@ def main_ga():
         print(ave_scores[i+1])
         print(best_items[i+1][:])
         print("================================================\n\n")
+        print((best_scores[i+1]-ave_scores[i+1])/best_scores[i+1]*100, "%")
+        if (best_scores[i+1]-ave_scores[i+1])/best_scores[i+1]*100 < 3:
+            break
 
     endTime = time.time()
     print("time: ", endTime - startTime)
