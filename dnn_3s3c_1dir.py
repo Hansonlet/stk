@@ -21,18 +21,6 @@ def import_data():
             line_data = line.split(" ")
             line_data[-1] = line_data[-1][0 : -1]
             line_data = list(map(float, line_data))
-            
-            # line_data[0] = line_data[1]
-            # line_data[1] = line_data[2]
-            # line_data[2] = line_data[3]
-            # line_data[3] = line_data[5]
-            # line_data[4] = line_data[6]
-            # line_data[5] = line_data[7]
-            # line_data[6] = line_data[8]
-            # line_data[7] = line_data[10]
-            # line_data[8] = line_data[11]
-            # line_data[9] = line_data[12]
-            # line_data[10] = line_data[13]
 
             line_data[14] = line_data[14]+line_data[15]+line_data[16]
             train.append(line_data[0 : 14])
