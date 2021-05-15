@@ -42,7 +42,7 @@ def import_data():
         fo.close()
     # np.random.shuffle(train)
     # np.random.shuffle(label)
-    train_amount = 10000 * 1
+    train_amount = 10000 * 5
     test_amount = int(train_amount/4)
     training_data = train[0 : train_amount]
     training_label = label[0 : train_amount]
@@ -87,7 +87,7 @@ model.add(Dense(units=1, activation='linear'))
 model.compile(optimizer='adam', loss='mse', metrics=['mape','mae']) 
 
 startTime = time.time()
-history = model.fit(training_data, training_label, epochs=10,  batch_size=16, verbose=1)# 
+history = model.fit(training_data, training_label, epochs=200,  batch_size=16, verbose=1)# 
 endTime = time.time()
 print("================ time cost: ", endTime-startTime)
 # validation_data=(test_data,test_label), validation_freq=1) 
