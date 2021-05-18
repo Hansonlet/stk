@@ -91,6 +91,9 @@ def init():
 def choose(group, scores):
     new_group = [[0 for col in range(11)] for row in range(item_size)]
     p_choose = [0 for col in range(item_size)]
+    min_scores = min(scores)
+    for i in range(item_size):
+        scores[i] -= min_scores
     sum_score = sum(scores)
     accumulate = 0
     # 轮盘 init
@@ -183,11 +186,11 @@ def main_ga():
     best_scores_to_print = [0 for col in range(gen+1)]
     for i in range(gen+1):
         best_scores_to_print[i] = float(best_scores[i])
-    return [best_scores_to_print, ave_scores, best_items, endTime, group]
-
+    return [best_scores, ave_scores, best_items, endTime, group, scores]
     
 
-[best_scores, ave_scores, best_items, endTime, group] = main_ga()
+
+[best_scores, ave_scores, best_items, endTime, group, scores] = main_ga()
 
 # plot
 fig1 = plt.figure(1)
@@ -224,6 +227,8 @@ myFo.write("\n")
 myFo.write("best_item\n")
 myFo.write(str(best_items))
 myFo.write("\n")
-myFo.write("group\n")
+myFo.write("now_group\n")
 myFo.write(str(group))
+myFo.write("now_scores\n")
+myFo.write(str(scores))
 myFo.close()

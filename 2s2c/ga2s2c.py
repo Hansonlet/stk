@@ -217,6 +217,9 @@ def init():
 def choose(group, scores):
     new_group = [[0 for col in range(7)] for row in range(item_size)]
     p_choose = [0 for col in range(item_size)]
+    min_scores = min(scores)
+    for i in range(item_size):
+        scores[i] -= min_scores
     sum_score = sum(scores)
     accumulate = 0
     # 轮盘 init
@@ -304,6 +307,7 @@ def main_ga():
         print((best_scores[i+1]-ave_scores[i+1])/best_scores[i+1]*100, "%")
         if (best_scores[i+1]-ave_scores[i+1])/best_scores[i+1]*100 < 5:
             break
+
     endTime = time.time()
     print("time: ", endTime - startTime)
     return [best_scores, ave_scores, best_items, endTime]
@@ -313,8 +317,8 @@ def main_ga():
 [best_scores, ave_scores, best_items, endTime] = main_ga()
 
 # 火焰图
-pr.disable()
-pr.dump_stats("C:\\ProgramData\\Anaconda3\\Lib\\site-packages\\__pycache__\\request.prof")
+# pr.disable()
+# pr.dump_stats("C:\\ProgramData\\Anaconda3\\Lib\\site-packages\\__pycache__\\request.prof")
 # pr.dump_stats("request.prof")
 # s = io.StringIO()
 # sortby = "cumtime"  # 仅适用于 3.6, 3.7 把这里改成常量了
@@ -329,14 +333,14 @@ plt.plot(best_scores)
 plt.xlabel('gen')
 plt.ylabel('best_score')
 plt.title('best_score of GA')
-fig1.savefig('best.png')
+fig1.savefig('ga2s2c_best_ori.png')
 
 fig2 = plt.figure(2)
 plt.plot(ave_scores)
 plt.xlabel('gen')
 plt.ylabel('average_score')
 plt.title('average_score of GA')
-fig2.savefig('average.png')
+fig2.savefig('ga2s2c_average_ori.png')
 
 print("================================")
 print("best: ", best_scores)
@@ -344,7 +348,7 @@ print("ave: ", ave_scores)
 print("items: ", best_items)
 plt.show()
 
-txtStr = "ga2s2c.txt"
+txtStr = "ga2s2c_ori.txt"
 myFo = open(txtStr, "w")
 
 myFo.write("time_cost\n")
@@ -356,7 +360,7 @@ myFo.write("\n")
 myFo.write("ave_score\n")
 myFo.write(str(ave_scores))
 myFo.write("\n")
-myFo.write("best_item\n")
+myFo.write("best_items\n")
 myFo.write(str(best_items))
 
 myFo.close()

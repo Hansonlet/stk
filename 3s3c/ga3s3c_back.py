@@ -202,38 +202,9 @@ def cal_once(group):
 
 def init():
     print("---------------- begin GA init ----------------")
-    group = [[0 for col in range(11)] for row in range(item_size)]
-    for i in range(item_size):
-        while 1:
-            # 半长轴 6500
-            # 偏心率 0 ~ 0.61
-            # 倾角,39.24~52.14
-            group[i][0] = random.random()*12.9+39.24
-            group[i][3] = random.random()*12.9+39.24
-            group[i][7] = random.random()*12.9+39.24
-            # 近地点,0-180
-            if random.random()>0.5:
-                group[i][1] = 90
-            else:
-                group[i][1] = 270
-            if random.random()>0.5:
-                group[i][4] = 90
-            else:
-                group[i][4] = 270
-            if random.random()>0.5:
-                group[i][8] = 90
-            else:
-                group[i][8] = 270
-            # 升交点,0-360
-            group[i][2] = random.random()*360
-            group[i][5] = random.random()*360
-            group[i][9] = random.random()*360
-            # 相位，0-360
-            group[i][6] = random.random()*360
-            group[i][10] = random.random()*360
-            break
+    # input inited group
+    group = 
 
-    # group = import_init_data()
     scores = [0 for col in range(item_size)]
     scores = cal(group, scores)
     print("==== init scores:", scores)
@@ -295,7 +266,7 @@ def variation(group):
         if (pos == 0 | pos == 3 | pos == 7 ):
             group[num][pos] = random.random()*13+39.24
         elif (pos == 1 | pos == 4 | pos == 8):
-            group[num][pos] = (group[num][pos]+180) % 360
+            group[num][pos] = (group[num][pos]+180)%360
         elif (pos == 2 | pos == 5 | pos == 9):
             group[num][pos] = random.random()*360
         elif (pos == 6 | pos == 10):
@@ -360,14 +331,14 @@ plt.plot(best_scores)
 plt.xlabel('代数')
 plt.ylabel('best_score')
 plt.title('best_score of GA')
-fig1.savefig('ga3s3c_best_ori.png')
+fig1.savefig('ga3s3c_best_back.png')
 
 fig2 = plt.figure(2)
 plt.plot(ave_scores)
 plt.xlabel('gen')
 plt.ylabel('average_score')
 plt.title('average_score of GA')
-fig2.savefig('ga3s3c_average_ori.png')
+fig2.savefig('ga3s3c_average_back.png')
 
 print("================================")
 print("best: ", best_scores)
@@ -375,7 +346,7 @@ print("ave: ", ave_scores)
 print("items: ", best_items)
 plt.show()
 
-txtStr = "ga3s3c_ori.txt"
+txtStr = "ga3s3c_back.txt"
 myFo = open(txtStr, "w")
 
 myFo.write("time_cost\n")
@@ -387,7 +358,7 @@ myFo.write("\n")
 myFo.write("ave_score\n")
 myFo.write(str(ave_scores))
 myFo.write("\n")
-myFo.write("best_items\n")
+myFo.write("best_items\n5")
 myFo.write(str(best_items))
 
 myFo.close()
