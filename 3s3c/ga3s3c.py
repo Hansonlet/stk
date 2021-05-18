@@ -13,7 +13,7 @@ pr = cProfile.Profile()
 pr.enable()
 
 # gobal parms
-item_size = 300
+item_size = 500
 gen = 200
 cross_rate = 0.5
 variation_rate = 0.4
@@ -245,6 +245,9 @@ def init():
 def choose(group, scores):
     new_group = [[0 for col in range(11)] for row in range(item_size)]
     p_choose = [0 for col in range(item_size)]
+    min_scores = min(scores)
+    for i in range(item_size):
+        scores[i] -= min_scores
     sum_score = sum(scores)
     accumulate = 0
     # 轮盘 init
@@ -318,7 +321,6 @@ def main_ga():
         # 变异
         group = variation(group)
         # take best
-        group[item_size-1][:] = best_item
         # 适应度
         scores = cal(group, scores)
         # record & print
@@ -329,6 +331,9 @@ def main_ga():
         print(ave_scores[i+1])
         print(best_items[i+1][:])
         print("================================================\n\n")
+        print((best_scores[i+1]-ave_scores[i+1])/best_scores[i+1]*100, "%")
+        if (best_scores[i+1]-ave_scores[i+1])/best_scores[i+1]*100 < 5:
+            break
 
     endTime = time.time()
     print("time: ", endTime - startTime)
@@ -339,8 +344,8 @@ def main_ga():
 [best_scores, ave_scores, best_items, endTime] = main_ga()
 
 # 火焰图
-pr.disable()
-pr.dump_stats("C:\\ProgramData\\Anaconda3\\Lib\\site-packages\\__pycache__\\request.prof")
+# pr.disable()
+# pr.dump_stats("C:\\ProgramData\\Anaconda3\\Lib\\site-packages\\__pycache__\\request.prof")
 # pr.dump_stats("request.prof")
 # s = io.StringIO()
 # sortby = "cumtime"  # 仅适用于 3.6, 3.7 把这里改成常量了
@@ -355,14 +360,14 @@ plt.plot(best_scores)
 plt.xlabel('代数')
 plt.ylabel('best_score')
 plt.title('best_score of GA')
-fig1.savefig('best.png')
+fig1.savefig('ga3s3c_best_ori.png')
 
 fig2 = plt.figure(2)
 plt.plot(ave_scores)
 plt.xlabel('gen')
 plt.ylabel('average_score')
 plt.title('average_score of GA')
-fig2.savefig('average.png')
+fig2.savefig('ga3s3c_average_ori.png')
 
 print("================================")
 print("best: ", best_scores)
@@ -370,19 +375,19 @@ print("ave: ", ave_scores)
 print("items: ", best_items)
 plt.show()
 
-txtStr = "ga3s3c.txt"
+txtStr = "ga3s3c_ori.txt"
 myFo = open(txtStr, "w")
 
 myFo.write("time_cost\n")
 myFo.write(str(endTime - startTime))
 myFo.write("\n")
-myFo.wirte("best_score\n")
+myFo.write("best_score\n")
 myFo.write(str(best_scores))
 myFo.write("\n")
-myFo.wirte("ave_score\n")
+myFo.write("ave_score\n")
 myFo.write(str(ave_scores))
 myFo.write("\n")
-myFo.wirte("best_item\n")
+myFo.write("best_items\n5")
 myFo.write(str(best_items))
 
 myFo.close()
