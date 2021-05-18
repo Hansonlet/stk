@@ -7,7 +7,7 @@ import tensorflow as tf
 from tensorflow.keras.models import load_model
 
 # gobal parms
-item_size = 100
+item_size = 500
 gen = 200
 cross_rate = 0.5
 variation_rate = 0.4
@@ -155,7 +155,7 @@ def main_ga():
         print(best_items[i+1][:])
         print("================================================\n\n")
         print((best_scores[i+1]-ave_scores[i+1])/best_scores[i+1]*100, "%")
-        if (best_scores[i+1]-ave_scores[i+1])/best_scores[i+1]*100 < 3:
+        if (best_scores[i+1]-ave_scores[i+1])/best_scores[i+1]*100 < 5:
             break
 
     endTime = time.time()
