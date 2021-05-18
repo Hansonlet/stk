@@ -13,6 +13,8 @@ cross_rate = 0.5
 variation_rate = 0.4
 totalTime = 27 * 24 * 60 * 60 + 7 * 60 * 60                 # 2358000
 startTime = time.time()
+txtStr = "ga2s2c_fore_group.txt"
+groupFo = open(txtStr, "w")
 
 # load dnn
 model = load_model('2s2c.h5')
@@ -164,6 +166,14 @@ def main_ga():
         print(ave_scores[i+1])
         print(best_items[i+1][:])
         print("================================================\n\n")
+         # record temp group & scores
+        temp_scores= [0 for col in range(item_size)]
+        for j in range(item_size):
+            temp_scores[j] = float(scores[j])
+        groupFo.write("\ngen: %d group\n" % i)
+        groupFo.write(str(group))
+        groupFo.write("\n\ngen: %d scores\n" % i)
+        groupFo.write(str(temp_scores))
         print((best_scores[i+1]-ave_scores[i+1])/best_scores[i+1]*100, "%")
         if (best_scores[i+1]-ave_scores[i+1])/best_scores[i+1]*100 < 5:
             break
@@ -173,8 +183,7 @@ def main_ga():
     best_scores_to_print = [0 for col in range(gen+1)]
     for i in range(gen+1):
         best_scores_to_print[i] = float(best_scores[i])
-    return [best_scores, ave_scores, best_items, endTime, group, scores]
-    
+    return [best_scores_to_print, ave_scores, best_items, endTime, group, scores]
 
 
 [best_scores, ave_scores, best_items, endTime, group, scores] = main_ga()
@@ -216,6 +225,7 @@ myFo.write(str(best_items))
 myFo.write("\n")
 myFo.write("now_group\n")
 myFo.write(str(group))
+myFo.write("\n")
 myFo.write("now_scores\n")
 myFo.write(str(scores))
 myFo.close()
