@@ -91,9 +91,9 @@ def init():
 def choose(group, scores):
     new_group = [[0 for col in range(11)] for row in range(item_size)]
     p_choose = [0 for col in range(item_size)]
-    min_scores = min(scores)
-    for i in range(item_size):
-        scores[i] -= min_scores
+    # min_scores = min(scores)
+    # for i in range(item_size):
+    #     scores[i] = scores[i] - min_scores
     sum_score = sum(scores)
     accumulate = 0
     # 轮盘 init

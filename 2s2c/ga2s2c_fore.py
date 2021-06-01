@@ -82,7 +82,7 @@ def choose(group, scores):
     p_choose = [0 for col in range(item_size)]
     min_scores = min(scores)
     for i in range(item_size):
-        scores[i] -= min_scores
+        scores[i] = scores[i] - min_scores + 50
     sum_score = sum(scores)
     accumulate = 0
     # 轮盘 init
@@ -165,8 +165,9 @@ def main_ga():
         print(best_scores[i+1])
         print(ave_scores[i+1])
         print(best_items[i+1][:])
+        print((best_scores[i+1]-ave_scores[i+1])/best_scores[i+1]*100, "%")
         print("================================================\n\n")
-         # record temp group & scores
+        # record temp group & scores
         temp_scores= [0 for col in range(item_size)]
         for j in range(item_size):
             temp_scores[j] = float(scores[j])
@@ -174,7 +175,6 @@ def main_ga():
         groupFo.write(str(group))
         groupFo.write("\n\ngen: %d scores\n" % i)
         groupFo.write(str(temp_scores))
-        print((best_scores[i+1]-ave_scores[i+1])/best_scores[i+1]*100, "%")
         if (best_scores[i+1]-ave_scores[i+1])/best_scores[i+1]*100 < 5:
             break
 
@@ -183,7 +183,10 @@ def main_ga():
     best_scores_to_print = [0 for col in range(gen+1)]
     for i in range(gen+1):
         best_scores_to_print[i] = float(best_scores[i])
-    return [best_scores_to_print, ave_scores, best_items, endTime, group, scores]
+    scores_to_print = [0 for col in range(item_size)]
+    for i in range(item_size):
+        scores_to_print[i] = float(scores[i])
+    return [best_scores_to_print, ave_scores, best_items, endTime, group, scores_to_print]
 
 
 [best_scores, ave_scores, best_items, endTime, group, scores] = main_ga()
